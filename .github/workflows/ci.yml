@@ -41,6 +41,6 @@ jobs:
           registry-url: https://npm.pkg.github.com
           scope: "@lintshiwe"
       - run: pnpm install
-      - run: pnpm -r --filter "@lintshiwe/*" publish --access public
+      - run: pnpm -r --filter "@lintshiwe/*" publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
