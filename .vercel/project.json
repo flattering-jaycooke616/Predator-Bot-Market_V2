@@ -1,0 +1,11 @@
+{
+  "projectId": "prj_REPLACE_ME",
+  "orgId": "team_REPLACE_ME",
+  "settings": {
+    "framework": null,
+    "devCommand": null,
+    "buildCommand": "cd artifacts/predator-bots && pnpm run build",
+    "outputDirectory": "artifacts/predator-bots/dist/public",
+    "installCommand": "pnpm install"
+  }
+}
