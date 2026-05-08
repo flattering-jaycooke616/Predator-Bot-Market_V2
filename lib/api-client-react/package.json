@@ -1,7 +1,6 @@
 {
-  "name": "@workspace/api-client-react",
+  "name": "@lintshiwe/api-client-react",
   "version": "0.0.0",
-  "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts"

@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { db } from "@workspace/db";
-import { botsTable } from "@workspace/db";
+import { db } from "@lintshiwe/db";
+import { botsTable } from "@lintshiwe/db";
 import { eq, and, sql } from "drizzle-orm";
-import { ListBotsQueryParams, GetBotParams } from "@workspace/api-zod";
+import { ListBotsQueryParams, GetBotParams } from "@lintshiwe/api-zod";
 
 const router = Router();
 

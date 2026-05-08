@@ -1,4 +1,4 @@
-#  Predator Bot Market V2
+# Predator Bot Market V2
 
 > **Institutional-grade marketplace for MQ4 trading algorithms.** Buy, sell, and deploy verified trading bots with secure download management.
 
@@ -24,41 +24,41 @@
 
 ---
 
-##  Table of Contents
+## Table of Contents
 
-- [Features](#-features)
-- [Architecture](#-architecture)
-- [Tech Stack](#-tech-stack)
-- [Quick Start](#-quick-start)
-- [Project Structure](#-project-structure)
-- [API Endpoints](#-api-endpoints)
-- [Database Schema](#-database-schema)
-- [Security](#-security)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+- [Database Schema](#database-schema)
+- [Security](#security)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-##  Features
+## Features
 
-###  Marketplace
+### Marketplace
 - **Browse & Search** — Filter bots by category, featured status, and more
 - **Bot Detail Pages** — Full documentation, feature lists, and pricing
 - **Purchase Flow** — Submit payment references for admin verification
 - **Download Management** — 2 downloads per purchase, links expire after 5 hours
 
-###  Authentication & Authorization
+### Authentication & Authorization
 - **Clerk Auth** — Sign in with Google, GitHub, email, and more
 - **Role-Based Access** — Admin vs. client permissions
 - **Session Management** — Automatic cache invalidation on user change
 
-###  Admin Dashboard
+### Admin Dashboard
 - **Algorithm Inventory** — Create, edit, and delete bot listings
 - **File Uploads** — Upload `.ex4`, `.mq4`, or `.zip` files
 - **Purchase Verification** — Approve or reject pending payments
 - **Purchase History** — View all completed and refunded orders
 
-###  Secure Downloads
+### Secure Downloads
 - **Presigned URLs** — GCS-signed download links with 5-hour expiry
 - **Download Limits** — Max 2 downloads per purchase
 - **Expiry Warnings** — Dashboard shows countdown timer for expiring links
@@ -66,43 +66,43 @@
 
 ---
 
-##  Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        Frontend (React)                      │
-│  Vite + React 19 + Tailwind CSS + wouter + TanStack Query   │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────────────┐  │
-│  │  Home    │ │ Market   │ │ Dashboard│ │    Admin       │  │
-│  │  Page    │ │ place    │ │          │ │    Panel       │  │
-│  └──────────┘ └──────────┘ └──────────┘ └────────────────┘  │
-└────────────────────────┬────────────────────────────────────┘
-                         │ /api/* proxied
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      API Server (Express 5)                  │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────────────┐  │
-│  │  Public  │ │ Protected│ │  Admin   │ │   Storage      │  │
-│  │  Routes  │ │  Routes  │ │  Routes  │ │   Routes       │  │
-│  └──────────┘ └──────────┘ └──────────┘ └────────────────┘  │
-│         │              │              │              │       │
-│    ┌────┴────┐   ┌─────┴─────┐  ┌─────┴─────┐  ┌───┴────┐  │
-│    │ Clerk   │   │ Drizzle   │  │ Clerk     │  │ GCS    │  │
-│    │ Auth    │   │ ORM/PG    │  │ Admin     │  │ Files  │  │
-│    └─────────┘   └───────────┘  └───────────┘  └────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────┐  ┌──────────────┐  ┌──────────────────┐
-│   PostgreSQL    │  │    Clerk     │  │  Google Cloud    │
-│   (Bots,        │  │   (Auth,     │  │  Storage (Files) │
-│   Purchases)    │  │   Users)     │  │                  │
-└─────────────────┘  └──────────────┘  └──────────────────┘
++-------------------------------------------------------------+
+|                        Frontend (React)                      |
+|  Vite + React 19 + Tailwind CSS + wouter + TanStack Query   |
+|  +----------+ +----------+ +----------+ +----------------+  |
+|  |  Home    | | Market   | | Dashboard| |    Admin       |  |
+|  |  Page    | | place    | |          | |    Panel       |  |
+|  +----------+ +----------+ +----------+ +----------------+  |
++------------------------+------------------------------------+
+                         | /api/* proxied
+                         v
++-------------------------------------------------------------+
+|                      API Server (Express 5)                  |
+|  +----------+ +----------+ +----------+ +----------------+  |
+|  |  Public  | | Protected| |  Admin   | |   Storage      |  |
+|  |  Routes  | |  Routes  | |  Routes  | |   Routes       |  |
+|  +----------+ +----------+ +----------+ +----------------+  |
+|         |              |              |              |       |
+|    +----+----+   +------+-----+  +------+-----+  +---+----+  |
+|    | Clerk   |   | Drizzle    |  | Clerk      |  | GCS    |  |
+|    | Auth    |   | ORM/PG     |  | Admin      |  | Files  |  |
+|    +---------+   +------------+  +------------+  +--------+  |
++-------------------------------------------------------------+
+                         |
+                         v
++-----------------+  +--------------+  +------------------+
+|   PostgreSQL    |  |    Clerk     |  |  Google Cloud    |
+|   (Bots,        |  |   (Auth,     |  |  Storage (Files) |
+|   Purchases)    |  |   Users)     |  |                  |
++-----------------+  +--------------+  +------------------+
 ```
 
 ---
 
-##  Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -117,7 +117,7 @@
 
 ---
 
-##  Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 22+
@@ -139,7 +139,7 @@ sudo systemctl start postgresql
 sudo -u postgres psql -c "CREATE USER predator_bot WITH PASSWORD 'predator_bot';"
 sudo -u postgres psql -c "CREATE DATABASE predator_bots OWNER predator_bot;"
 DATABASE_URL=postgresql://predator_bot:predator_bot@localhost:5432/predator_bots \
-  pnpm --filter @workspace/db run push
+  pnpm --filter @lintshiwe/db run push
 DATABASE_URL=postgresql://predator_bot:predator_bot@localhost:5432/predator_bots \
   pnpm exec tsx lib/db/seed.ts
 ```
@@ -164,41 +164,41 @@ Navigate to **http://localhost:5173**
 
 ---
 
-##  Project Structure
+## Project Structure
 
 ```
 Predator-Bot-Market_V2/
-├── artifacts/
-│   ├── api-server/           # Express 5 API server
-│   │   ├── src/
-│   │   │   ├── routes/       # API route handlers
-│   │   │   │   ├── public.ts # Public routes (health, config, bots)
-│   │   │   │   ├── protected.ts # Auth-required routes (purchases)
-│   │   │   │   ├── admin.ts  # Admin-only routes
-│   │   │   │   └── storage.ts # GCS file serving
-│   │   │   ├── middlewares/  # Clerk proxy middleware
-│   │   │   └── lib/          # Logger, GCS client, ACL
-│   │   └── build.mjs         # esbuild configuration
-│   ├── predator-bots/        # React frontend (Vite)
-│   │   └── src/
-│   │       ├── pages/        # Home, Bots, Dashboard, Admin
-│   │       ├── components/   # UI components + layout
-│   │       └── hooks/        # Custom React hooks
-│   └── mockup-sandbox/       # Design preview sandbox
-├── lib/
-│   ├── api-client-react/     # Generated React Query hooks (Orval)
-│   ├── api-spec/             # OpenAPI spec + Orval config
-│   ├── api-zod/              # Generated Zod schemas
-│   └── db/                   # Drizzle ORM schema + migrations
-│       ├── src/schema/       # Table definitions
-│       ├── drizzle.config.ts # Drizzle configuration
-│       └── seed.ts           # Database seed script
-└── scripts/                  # Utility scripts
++— artifacts/
+|   +— api-server/           # Express 5 API server
+|   |   +— src/
+|   |   |   +— routes/       # API route handlers
+|   |   |   |   +— public.ts # Public routes (health, config, bots)
+|   |   |   |   +— protected.ts # Auth-required routes (purchases)
+|   |   |   |   +— admin.ts  # Admin-only routes
+|   |   |   |   +— storage.ts # GCS file serving
+|   |   |   +— middlewares/  # Clerk proxy middleware
+|   |   |   +— lib/          # Logger, GCS client, ACL
+|   |   +— build.mjs         # esbuild configuration
+|   +— predator-bots/        # React frontend (Vite)
+|   |   +— src/
+|   |       +— pages/        # Home, Bots, Dashboard, Admin
+|   |       +— components/   # UI components + layout
+|   |       +— hooks/        # Custom React hooks
+|   +— mockup-sandbox/       # Design preview sandbox
++— lib/
+|   +— api-client-react/     # Generated React Query hooks (Orval)
+|   +— api-spec/             # OpenAPI spec + Orval config
+|   +— api-zod/              # Generated Zod schemas
+|   +— db/                   # Drizzle ORM schema + migrations
+|       +— src/schema/       # Table definitions
+|       +— drizzle.config.ts # Drizzle configuration
+|       +— seed.ts           # Database seed script
++— scripts/                  # Utility scripts
 ```
 
 ---
 
-##  API Endpoints
+## API Endpoints
 
 ### Public
 | Method | Path | Description |
@@ -229,7 +229,7 @@ Predator-Bot-Market_V2/
 
 ---
 
-##  Database Schema
+## Database Schema
 
 ### `bots` Table
 | Column | Type | Description |
@@ -256,7 +256,7 @@ Predator-Bot-Market_V2/
 |--------|------|-------------|
 | `id` | SERIAL | Primary key |
 | `user_id` | TEXT | Clerk user ID |
-| `bot_id` | INTEGER | FK → bots.id |
+| `bot_id` | INTEGER | FK to bots.id |
 | `status` | TEXT | pending / completed / refunded |
 | `amount_paid` | DECIMAL(10,2) | Purchase amount |
 | `payment_reference` | TEXT | Payment tx hash |
@@ -267,7 +267,7 @@ Predator-Bot-Market_V2/
 
 ---
 
-##  Security
+## Security
 
 - **Clerk Authentication** — Industry-standard auth with session management
 - **Admin Verification** — All purchases require manual admin approval
@@ -279,7 +279,7 @@ Predator-Bot-Market_V2/
 
 ---
 
-##  Contributing
+## Contributing
 
 Contributions are welcome! Please read our contributing guidelines:
 
@@ -291,7 +291,7 @@ Contributions are welcome! Please read our contributing guidelines:
 
 ---
 
-##  License
+## License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
@@ -305,4 +305,3 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 [![Organization](https://img.shields.io/badge/Org-LetsOperate-24292e?logo=github)](https://github.com/Letsoperate)
 
 </div>
-

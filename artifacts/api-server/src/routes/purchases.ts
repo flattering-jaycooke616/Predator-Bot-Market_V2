@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { db } from "@workspace/db";
-import { botsTable, purchasesTable } from "@workspace/db";
+import { db } from "@lintshiwe/db";
+import { botsTable, purchasesTable } from "@lintshiwe/db";
 import { eq, and } from "drizzle-orm";
 import { getAuth } from "@clerk/express";
-import { CreatePurchaseBody, GetPurchaseParams, DownloadBotParams } from "@workspace/api-zod";
+import { CreatePurchaseBody, GetPurchaseParams, DownloadBotParams } from "@lintshiwe/api-zod";
 import { getObjectStorageClient } from "../lib/objectStorage";
 
 const DOWNLOAD_EXPIRY_HOURS = 5;

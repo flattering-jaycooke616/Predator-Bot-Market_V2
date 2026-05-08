@@ -1,4 +1,4 @@
-import { useListMyPurchases, getListMyPurchasesQueryKey, useDownloadBot } from "@workspace/api-client-react";
+import { useListMyPurchases, getListMyPurchasesQueryKey, useDownloadBot } from "@lintshiwe/api-client-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@clerk/react";
 import { useLocation } from "wouter";
-import { useAdminListPurchases, getAdminListPurchasesQueryKey, useListBots, getListBotsQueryKey, useAdminCreateBot, useAdminUpdateBot, useAdminDeleteBot, useRequestUploadUrl, useAdminVerifyPurchase, useAdminRejectPurchase } from "@workspace/api-client-react";
+import { useAdminListPurchases, getAdminListPurchasesQueryKey, useListBots, getListBotsQueryKey, useAdminCreateBot, useAdminUpdateBot, useAdminDeleteBot, useRequestUploadUrl, useAdminVerifyPurchase, useAdminRejectPurchase } from "@lintshiwe/api-client-react";
 import { queryClient } from "@/lib/queryClient";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";

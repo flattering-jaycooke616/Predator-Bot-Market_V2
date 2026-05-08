@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/api-server",
+  "name": "@lintshiwe/api-server",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,8 @@
     "@clerk/express": "^2.1.12",
     "@clerk/shared": "^4.9.0",
     "@google-cloud/storage": "^7.19.0",
-    "@workspace/api-zod": "workspace:*",
-    "@workspace/db": "workspace:*",
+    "@lintshiwe/api-zod": "workspace:*",
+    "@lintshiwe/db": "workspace:*",
     "cookie-parser": "^1.4.7",
     "cors": "^2",
     "drizzle-orm": "catalog:",

@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { db } from "@workspace/db";
-import { botsTable, purchasesTable } from "@workspace/db";
+import { db } from "@lintshiwe/db";
+import { botsTable, purchasesTable } from "@lintshiwe/db";
 import { eq } from "drizzle-orm";
 import { getAuth, clerkClient } from "@clerk/express";
-import { AdminCreateBotBody, AdminUpdateBotBody, AdminUpdateBotParams, AdminDeleteBotParams, AdminVerifyPurchaseParams } from "@workspace/api-zod";
+import { AdminCreateBotBody, AdminUpdateBotBody, AdminUpdateBotParams, AdminDeleteBotParams, AdminVerifyPurchaseParams } from "@lintshiwe/api-zod";
 
 const router = Router();
 

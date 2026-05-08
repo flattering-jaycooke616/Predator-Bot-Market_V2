@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/predator-bots",
+  "name": "@lintshiwe/predator-bots",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -45,7 +45,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "@workspace/api-client-react": "workspace:*",
+    "@lintshiwe/api-client-react": "workspace:*",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "cmdk": "^1.1.1",

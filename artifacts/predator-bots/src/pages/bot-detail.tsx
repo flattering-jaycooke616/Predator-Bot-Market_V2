@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useParams, Link } from "wouter";
-import { useGetBot, getGetBotQueryKey, useCreatePurchase, useListMyPurchases, getListMyPurchasesQueryKey, CreatePurchaseMutationBody } from "@workspace/api-client-react";
+import { useGetBot, getGetBotQueryKey, useCreatePurchase, useListMyPurchases, getListMyPurchasesQueryKey, CreatePurchaseMutationBody } from "@lintshiwe/api-client-react";
 import { useAuth } from "@clerk/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
