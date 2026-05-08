@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm install && pnpm run typecheck && cd artifacts/predator-bots && pnpm run build",
+  "outputDirectory": "artifacts/predator-bots/dist",
+  "installCommand": "pnpm install"
+}
