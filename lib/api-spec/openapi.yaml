@@ -1,0 +1,580 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification for Predator MQ4 Bots marketplace
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: bots
+    description: MQ4 bot operations
+  - name: purchases
+    description: Purchase operations
+  - name: downloads
+    description: Download operations
+  - name: admin
+    description: Admin operations
+  - name: storage
+    description: Object storage operations
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /bots:
+    get:
+      operationId: listBots
+      tags: [bots]
+      summary: List all available bots
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: featured
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of bots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Bot"
+
+  /bots/{id}:
+    get:
+      operationId: getBot
+      tags: [bots]
+      summary: Get a single bot by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Bot details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bot"
+        "404":
+          description: Bot not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /bots/stats:
+    get:
+      operationId: getBotStats
+      tags: [bots]
+      summary: Get marketplace stats (total bots, purchases, etc.)
+      responses:
+        "200":
+          description: Marketplace stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketplaceStats"
+
+  /purchases:
+    get:
+      operationId: listMyPurchases
+      tags: [purchases]
+      summary: List purchases for the current user
+      responses:
+        "200":
+          description: User purchases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Purchase"
+    post:
+      operationId: createPurchase
+      tags: [purchases]
+      summary: Create a purchase (mark as paid)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePurchaseBody"
+      responses:
+        "201":
+          description: Purchase created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Purchase"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /purchases/{id}:
+    get:
+      operationId: getPurchase
+      tags: [purchases]
+      summary: Get a purchase by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Purchase details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Purchase"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /downloads/{purchaseId}:
+    post:
+      operationId: downloadBot
+      tags: [downloads]
+      summary: Initiate a download for a purchased bot
+      parameters:
+        - name: purchaseId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Download URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DownloadResponse"
+        "400":
+          description: Download limit reached or expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Purchase not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/bots:
+    post:
+      operationId: adminCreateBot
+      tags: [admin]
+      summary: Admin - Create a new bot listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBotBody"
+      responses:
+        "201":
+          description: Bot created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bot"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/bots/{id}:
+    put:
+      operationId: adminUpdateBot
+      tags: [admin]
+      summary: Admin - Update a bot listing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBotBody"
+      responses:
+        "200":
+          description: Bot updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bot"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: adminDeleteBot
+      tags: [admin]
+      summary: Admin - Delete a bot listing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/purchases:
+    get:
+      operationId: adminListPurchases
+      tags: [admin]
+      summary: Admin - List all purchases
+      responses:
+        "200":
+          description: All purchases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Purchase"
+
+  /admin/purchases/{id}/verify:
+    put:
+      operationId: adminVerifyPurchase
+      tags: [admin]
+      summary: Admin - Verify and approve a pending purchase
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Purchase verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Purchase"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/purchases/{id}/reject:
+    put:
+      operationId: adminRejectPurchase
+      tags: [admin]
+      summary: Admin - Reject a pending purchase
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Purchase rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Purchase"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /storage/uploads/request-url:
+    post:
+      operationId: requestUploadUrl
+      tags: [storage]
+      summary: Request a presigned upload URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestUploadUrlBody"
+      responses:
+        "200":
+          description: Presigned upload URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestUploadUrlResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Bot:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        longDescription:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        category:
+          type: string
+        features:
+          type: array
+          items:
+            type: string
+        imageUrl:
+          type: string
+        fileObjectPath:
+          type: string
+          nullable: true
+        featured:
+          type: boolean
+        active:
+          type: boolean
+        downloadsCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - slug
+        - description
+        - price
+        - currency
+        - category
+        - features
+        - featured
+        - active
+        - downloadsCount
+        - createdAt
+        - updatedAt
+
+    CreateBotBody:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        longDescription:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        category:
+          type: string
+        features:
+          type: array
+          items:
+            type: string
+        imageUrl:
+          type: string
+        fileObjectPath:
+          type: string
+          nullable: true
+        featured:
+          type: boolean
+        active:
+          type: boolean
+      required:
+        - name
+        - slug
+        - description
+        - price
+        - currency
+        - category
+        - features
+
+    Purchase:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: string
+        botId:
+          type: integer
+        bot:
+          $ref: "#/components/schemas/Bot"
+        status:
+          type: string
+          enum: [pending, completed, refunded]
+        amountPaid:
+          type: number
+        paymentReference:
+          type: string
+          nullable: true
+        downloadCount:
+          type: integer
+        maxDownloads:
+          type: integer
+        secondDownloadExpiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - botId
+        - status
+        - amountPaid
+        - downloadCount
+        - maxDownloads
+        - createdAt
+
+    CreatePurchaseBody:
+      type: object
+      properties:
+        botId:
+          type: integer
+        paymentReference:
+          type: string
+      required:
+        - botId
+        - paymentReference
+
+    DownloadResponse:
+      type: object
+      properties:
+        downloadUrl:
+          type: string
+        downloadsRemaining:
+          type: integer
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        expiryNotice:
+          type: string
+      required:
+        - downloadUrl
+        - downloadsRemaining
+
+    MarketplaceStats:
+      type: object
+      properties:
+        totalBots:
+          type: integer
+        totalPurchases:
+          type: integer
+        featuredBots:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              count:
+                type: integer
+            required:
+              - name
+              - count
+      required:
+        - totalBots
+        - totalPurchases
+        - featuredBots
+        - categories
+
+    RequestUploadUrlBody:
+      type: object
+      properties:
+        filename:
+          type: string
+        contentType:
+          type: string
+      required:
+        - filename
+        - contentType
+
+    RequestUploadUrlResponse:
+      type: object
+      properties:
+        uploadUrl:
+          type: string
+        objectPath:
+          type: string
+      required:
+        - uploadUrl
+        - objectPath

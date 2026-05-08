@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "GtSrtsA9FFIWLzY6sfsXo"
+uri = "file://artifacts/predator-bots/public/hero-phone.png"
+type = "image"
+title = "Phone MetaTrader4 Predator Bot"
+
+[[generated]]
+id = "o_BSGrCwpxeHkcl0Lbfh2"
+uri = "file://artifacts/predator-bots/public/hero-laptop.png"
+type = "image"
+title = "Laptop MetaTrader4 Predator Bot"

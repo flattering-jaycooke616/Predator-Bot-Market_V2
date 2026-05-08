@@ -1,0 +1,140 @@
+{
+  "colorScheme": "dark",
+  "fonts": [
+    {
+      "family": "Plus Jakarta Sans",
+      "role": "body"
+    }
+  ],
+  "colors": {
+    "primary": "#4B5563",
+    "secondary": "#111827",
+    "accent": "#2563EB",
+    "background": "#F0F2F5",
+    "textPrimary": "#346BFA",
+    "link": "#346BFA"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Plus Jakarta Sans",
+      "heading": "Plus Jakarta Sans"
+    },
+    "fontStacks": {
+      "heading": [
+        "Plus Jakarta Sans",
+        "sans-serif"
+      ],
+      "body": [
+        "Plus Jakarta Sans",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Plus Jakarta Sans",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "72px",
+      "h2": "60px",
+      "body": "20px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "7px"
+  },
+  "components": {
+    "input": {
+      "background": "#FFFFFF",
+      "textColor": "#9CA3AF",
+      "borderColor": null,
+      "borderRadius": "12px",
+      "borderRadiusCorners": {
+        "topLeft": "12px",
+        "topRight": "12px",
+        "bottomRight": "12px",
+        "bottomLeft": "12px"
+      },
+      "shadow": "none"
+    },
+    "buttonPrimary": {
+      "background": "#2563EB",
+      "textColor": "#FFFFFF",
+      "borderRadius": "16px",
+      "borderRadiusCorners": {
+        "topLeft": "16px",
+        "topRight": "16px",
+        "bottomRight": "16px",
+        "bottomLeft": "16px"
+      },
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px"
+    },
+    "buttonSecondary": {
+      "background": "#FFFFFF",
+      "textColor": "#346BFA",
+      "borderRadius": "18px",
+      "borderRadiusCorners": {
+        "topLeft": "18px",
+        "topRight": "18px",
+        "bottomRight": "18px",
+        "bottomLeft": "18px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": "https://breppo.com/full-logo-white.png",
+    "favicon": "https://breppo.com/logo.png",
+    "ogImage": "/full-logo-real.png",
+    "logoAlt": "Breppo Logo"
+  },
+  "__llm_logo_reasoning": {
+    "selectedIndex": 0,
+    "reasoning": "Selected #0 because it is visible, located in the header, and matches the brand name 'Breppo'.",
+    "confidence": 0.9,
+    "source": "llm"
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 1,
+      "text": "Deposit now",
+      "reasoning": "Button #1 has a vibrant blue background (#2563EB), which is a strong indicator of a primary CTA. The text 'Deposit now' is action-oriented, making it the most likely primary button."
+    },
+    "secondary": {
+      "index": 0,
+      "text": "Get Started",
+      "reasoning": "Button #0 has a different color group with a white background and blue text, making it suitable as a secondary button. The text 'Get Started' suggests a secondary action."
+    },
+    "confidence": 0.95
+  },
+  "personality": {
+    "tone": "modern",
+    "energy": "medium",
+    "targetAudience": "tech-savvy individuals"
+  },
+  "designSystem": {
+    "framework": "tailwind",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.95,
+    "colors": 0.9,
+    "overall": 0.925
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": true,
+      "llmSucceeded": true,
+      "finalSource": "llm",
+      "rawLogoSelection": {
+        "selectedLogoIndex": 0,
+        "selectedLogoReasoning": "Selected #0 because it is visible, located in the header, and matches the brand name 'Breppo'.",
+        "confidence": 0.9
+      }
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}
