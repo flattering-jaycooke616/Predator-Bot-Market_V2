@@ -1,4 +1,4 @@
-# 🤖 Predator Bot Market V2
+#  Predator Bot Market V2
 
 > **Institutional-grade marketplace for MQ4 trading algorithms.** Buy, sell, and deploy verified trading bots with secure download management.
 
@@ -24,7 +24,7 @@
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Features](#-features)
 - [Architecture](#-architecture)
@@ -39,26 +39,26 @@
 
 ---
 
-## ✨ Features
+##  Features
 
-### 🛒 Marketplace
+###  Marketplace
 - **Browse & Search** — Filter bots by category, featured status, and more
 - **Bot Detail Pages** — Full documentation, feature lists, and pricing
 - **Purchase Flow** — Submit payment references for admin verification
 - **Download Management** — 2 downloads per purchase, links expire after 5 hours
 
-### 🔐 Authentication & Authorization
+###  Authentication & Authorization
 - **Clerk Auth** — Sign in with Google, GitHub, email, and more
 - **Role-Based Access** — Admin vs. client permissions
 - **Session Management** — Automatic cache invalidation on user change
 
-### 🛡️ Admin Dashboard
+###  Admin Dashboard
 - **Algorithm Inventory** — Create, edit, and delete bot listings
 - **File Uploads** — Upload `.ex4`, `.mq4`, or `.zip` files
 - **Purchase Verification** — Approve or reject pending payments
 - **Purchase History** — View all completed and refunded orders
 
-### 📦 Secure Downloads
+###  Secure Downloads
 - **Presigned URLs** — GCS-signed download links with 5-hour expiry
 - **Download Limits** — Max 2 downloads per purchase
 - **Expiry Warnings** — Dashboard shows countdown timer for expiring links
@@ -66,7 +66,7 @@
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -102,7 +102,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -117,7 +117,7 @@
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Node.js 22+
@@ -164,7 +164,7 @@ Navigate to **http://localhost:5173**
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Predator-Bot-Market_V2/
@@ -198,7 +198,7 @@ Predator-Bot-Market_V2/
 
 ---
 
-## 🔌 API Endpoints
+##  API Endpoints
 
 ### Public
 | Method | Path | Description |
@@ -229,7 +229,7 @@ Predator-Bot-Market_V2/
 
 ---
 
-## 🗄️ Database Schema
+##  Database Schema
 
 ### `bots` Table
 | Column | Type | Description |
@@ -267,7 +267,7 @@ Predator-Bot-Market_V2/
 
 ---
 
-## 🔒 Security
+##  Security
 
 - **Clerk Authentication** — Industry-standard auth with session management
 - **Admin Verification** — All purchases require manual admin approval
@@ -279,7 +279,7 @@ Predator-Bot-Market_V2/
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please read our contributing guidelines:
 
@@ -291,7 +291,7 @@ Contributions are welcome! Please read our contributing guidelines:
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
@@ -299,10 +299,10 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 <div align="center">
 
-**Built with ❤️ by [Lintshiwe](https://github.com/Lintshiwe) — Founder of [LetsOperate](https://github.com/Letsoperate)**
+**Built by [Lintshiwe](https://github.com/Lintshiwe) — Founder of [LetsOperate](https://github.com/Letsoperate)**
 
 [![GitHub](https://img.shields.io/badge/GitHub-Lintshiwe-181717?logo=github)](https://github.com/Lintshiwe)
 [![Organization](https://img.shields.io/badge/Org-LetsOperate-24292e?logo=github)](https://github.com/Letsoperate)
 
 </div>
-### Badge Test 3
+
