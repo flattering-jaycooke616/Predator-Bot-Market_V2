@@ -17,10 +17,10 @@ export default function Bots() {
     { query: { queryKey: getListBotsQueryKey({ category }) } }
   );
 
-  const filteredBots = bots?.filter(bot => 
+  const filteredBots = Array.isArray(bots) ? bots.filter(bot => 
     bot.name.toLowerCase().includes(search.toLowerCase()) ||
     bot.description.toLowerCase().includes(search.toLowerCase())
-  );
+  ) : [];
 
   const categories = ["Forex", "Crypto", "Indices", "Commodities"];
 
@@ -77,7 +77,7 @@ export default function Bots() {
             </Card>
           ))}
         </div>
-      ) : filteredBots?.length === 0 ? (
+      ) : filteredBots.length === 0 ? (
         <div className="text-center py-24 bg-card border border-white/5 rounded-xl">
           <TerminalSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
           <h3 className="text-xl font-bold text-white mb-2">No algorithms found</h3>
