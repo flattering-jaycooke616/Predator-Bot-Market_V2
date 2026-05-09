@@ -1,0 +1,57 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0A0A0F"/>
+  
+  <!-- Gradient overlay -->
+  <rect width="1200" height="630" fill="url(#bgGrad)" opacity="0.8"/>
+  
+  <!-- Grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00FF88" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00FF88" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#0A0A0F" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00FF88" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Logo (top left) -->
+  <rect x="48" y="48" width="56" height="56" rx="12" fill="#0A0A0F" stroke="#00FF88" stroke-width="2"/>
+  <path d="M58 58H78C86.284 58 93 64.716 93 73C93 81.284 86.284 88 78 88H70V100H58V58Z" fill="#00FF88" filter="url(#glow)"/>
+  <path d="M70 70H76C78.761 70 81 72.239 81 75C81 77.761 78.761 80 76 80H70V70Z" fill="#0A0A0F"/>
+  <path d="M99 58L107 66L99 74V58Z" fill="#00FF88" opacity="0.5"/>
+  <path d="M99 84L107 92L99 100V84Z" fill="#00FF88" opacity="0.25"/>
+  
+  <!-- Main title -->
+  <text x="600" y="260" text-anchor="middle" font-family="monospace, sans-serif" font-size="72" font-weight="bold" fill="#FFFFFF" filter="url(#glow)">PREDATOR</text>
+  <text x="600" y="340" text-anchor="middle" font-family="monospace, sans-serif" font-size="48" font-weight="bold" fill="#00FF88" letter-spacing="8">MQ4 BOTS</text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="410" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#888888">Execute Trades with Lethal Precision</text>
+  
+  <!-- Decorative line -->
+  <line x1="400" y1="450" x2="800" y2="450" stroke="#00FF88" stroke-width="1" opacity="0.3"/>
+  
+  <!-- Stats -->
+  <text x="350" y="500" text-anchor="middle" font-family="monospace" font-size="20" fill="#00FF88">24/7 Execution</text>
+  <text x="600" y="500" text-anchor="middle" font-family="monospace" font-size="20" fill="#00FF88">99.9% Uptime</text>
+  <text x="850" y="500" text-anchor="middle" font-family="monospace" font-size="20" fill="#00FF88">&lt;5ms Latency</text>
+  
+  <!-- Bottom bar -->
+  <rect x="0" y="570" width="1200" height="60" fill="#00FF88" opacity="0.1"/>
+  
+  <!-- Credit watermark -->
+  <text x="600" y="608" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#00FF88" opacity="0.8">Created by Letsoperate</text>
+  <text x="600" y="628" text-anchor="middle" font-family="monospace" font-size="12" fill="#666666">https://letsoperate.vercel.app</text>
+</svg>
