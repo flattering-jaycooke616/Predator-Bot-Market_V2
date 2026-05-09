@@ -17,12 +17,15 @@ FROM base AS runner
 
 WORKDIR /app
 
+# Copy the bundled output (esbuild bundles all workspace TS packages)
 COPY --from=builder /app/artifacts/api-server/dist ./dist
-COPY --from=builder /app/lib/db/dist ./lib/db/dist
-COPY --from=builder /app/lib/api-zod/dist ./lib/api-zod/dist
+
+# Copy all node_modules (includes workspace packages and dependencies)
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/artifacts/api-server/node_modules ./artifacts/api-server/node_modules
 COPY --from=builder /app/artifacts/api-server/package.json ./artifacts/api-server/package.json
+COPY --from=builder /app/lib/db/package.json ./lib/db/package.json
+COPY --from=builder /app/lib/api-zod/package.json ./lib/api-zod/package.json
 
 ENV NODE_ENV=production
 ENV PORT=8080
