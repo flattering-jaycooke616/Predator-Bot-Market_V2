@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { ClerkProvider, SignIn, SignUp, useClerk } from "@clerk/react";
@@ -22,12 +22,7 @@ function stripBase(path: string): string {
     : path;
 }
 
-async function fetchClerkKey(): Promise<string> {
-  const res = await fetch("/api/config");
-  if (!res.ok) throw new Error("Failed to fetch config");
-  const data = await res.json();
-  return data.clerkPublishableKey;
-}
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "";
 
 function ClerkQueryClientCacheInvalidator() {
   const { addListener } = useClerk();
@@ -89,21 +84,9 @@ function Router() {
 
 function App() {
   const [, setLocation] = useLocation();
-  const [clerkPubKey, setClerkPubKey] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchClerkKey()
-      .then(setClerkPubKey)
-      .catch((err) => setError(err.message));
-  }, []);
-
-  if (error) {
-    return <div>Failed to load config: {error}</div>;
-  }
 
   if (!clerkPubKey) {
-    return <div>Loading...</div>;
+    return <div>Clerk publishable key is not configured. Set VITE_CLERK_PUBLISHABLE_KEY environment variable.</div>;
   }
 
   return (
