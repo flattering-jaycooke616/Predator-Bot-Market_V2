@@ -4,7 +4,6 @@ import { botsTable, purchasesTable } from "@lintshiwe/db";
 import { eq, and } from "drizzle-orm";
 import { getAuth } from "@clerk/express";
 import { CreatePurchaseBody, GetPurchaseParams, DownloadBotParams } from "@lintshiwe/api-zod";
-import { getObjectStorageClient } from "../lib/objectStorage";
 
 const DOWNLOAD_EXPIRY_HOURS = 5;
 
@@ -172,36 +171,12 @@ router.post("/downloads/:purchaseId", requireAuth, async (req, res) => {
       return res.status(400).json({ error: "Bot file not available yet. Contact support." });
     }
 
-    let downloadUrl: string;
-    const expiresAt = secondDownloadExpiresAt?.toISOString() ?? null;
-
-    try {
-      const storageClient = getObjectStorageClient();
-      const parts = purchase.bot.fileObjectPath.slice(1).split("/");
-      const entityId = parts.slice(1).join("/");
-      let entityDir = process.env.PRIVATE_OBJECT_DIR || "";
-      if (!entityDir.endsWith("/")) entityDir = `${entityDir}/`;
-      const fullPath = `${entityDir}${entityId}`;
-      const pathParts = fullPath.startsWith("/") ? fullPath.slice(1).split("/") : fullPath.split("/");
-      const bucketName = pathParts[0];
-      const objectName = pathParts.slice(1).join("/");
-
-      const bucket = storageClient.bucket(bucketName);
-      const file = bucket.file(objectName);
-      const [signedUrl] = await file.getSignedUrl({
-        version: "v4",
-        action: "read",
-        expires: Date.now() + DOWNLOAD_EXPIRY_HOURS * 60 * 60 * 1000,
-      });
-      downloadUrl = signedUrl;
-    } catch {
-      downloadUrl = `/api/storage/objects${purchase.bot.fileObjectPath.replace(/^\/objects/, "")}`;
-    }
+    const downloadUrl = `/api/storage/files${purchase.bot.fileObjectPath}`;
 
     return res.json({
       downloadUrl,
       downloadsRemaining: purchase.maxDownloads - newCount,
-      expiresAt,
+      expiresAt: secondDownloadExpiresAt?.toISOString() ?? null,
       expiryNotice: `This download link will expire in ${DOWNLOAD_EXPIRY_HOURS} hours.`,
     });
   } catch (err) {
