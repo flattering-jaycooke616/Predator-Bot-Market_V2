@@ -44,6 +44,8 @@ export default function Admin() {
     featured: false, active: true
   });
   const [file, setFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const resetForm = () => {
@@ -54,6 +56,8 @@ export default function Admin() {
       featured: false, active: true
     });
     setFile(null);
+    setImageFile(null);
+    setVideoFile(null);
     setEditingBotId(null);
   };
 
@@ -91,6 +95,7 @@ export default function Admin() {
     try {
       setUploading(true);
       let objectPath = formData.fileObjectPath;
+      let imageUrl = formData.imageUrl;
 
       if (file) {
         const uploadUrlRes = await requestUploadUrl.mutateAsync({
@@ -106,6 +111,20 @@ export default function Admin() {
         objectPath = uploadUrlRes.objectPath;
       }
 
+      if (imageFile) {
+        const uploadUrlRes = await requestUploadUrl.mutateAsync({
+          data: { filename: imageFile.name, contentType: imageFile.type || 'image/png' }
+        });
+        
+        await fetch(uploadUrlRes.uploadUrl, {
+          method: "PUT",
+          headers: { "Content-Type": imageFile.type || 'image/png' },
+          body: imageFile
+        });
+        
+        imageUrl = uploadUrlRes.objectPath;
+      }
+
       const payload = {
         name: formData.name,
         slug: formData.slug,
@@ -115,7 +134,7 @@ export default function Admin() {
         currency: formData.currency,
         category: formData.category,
         features: formData.features.split("\n").filter(f => f.trim() !== ""),
-        imageUrl: formData.imageUrl,
+        imageUrl,
         fileObjectPath: objectPath,
         featured: formData.featured,
         active: formData.active
@@ -230,9 +249,15 @@ export default function Admin() {
                     <Label>Features (One per line)</Label>
                     <Textarea className="bg-background border-white/10" value={formData.features} onChange={e => setFormData({...formData, features: e.target.value})} />
                   </div>
-                  <div className="col-span-2 space-y-2">
-                    <Label>Image URL</Label>
-                    <Input className="bg-background border-white/10" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} />
+                  <div className="col-span-2 space-y-2 p-4 border border-white/5 rounded-lg bg-background/50">
+                    <Label>Bot Image (PNG, JPG, WEBP)</Label>
+                    <Input type="file" className="bg-background border-white/10" accept="image/png,image/jpeg,image/webp,image/gif" onChange={e => setImageFile(e.target.files?.[0] || null)} />
+                    {formData.imageUrl && !imageFile && <p className="text-xs text-muted-foreground mt-1">Current image: {formData.imageUrl}</p>}
+                  </div>
+                  <div className="col-span-2 space-y-2 p-4 border border-white/5 rounded-lg bg-background/50">
+                    <Label>Bot Video (MP4, WEBM) - Optional</Label>
+                    <Input type="file" className="bg-background border-white/10" accept="video/mp4,video/webm" onChange={e => setVideoFile(e.target.files?.[0] || null)} />
+                    <p className="text-xs text-muted-foreground mt-1">Upload a demo video for this bot</p>
                   </div>
                   <div className="col-span-2 space-y-2 p-4 border border-white/5 rounded-lg bg-background/50">
                     <Label>Bot File (.ex4, .mq4, or .zip)</Label>

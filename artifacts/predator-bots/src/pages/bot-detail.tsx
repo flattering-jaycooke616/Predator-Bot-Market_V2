@@ -139,7 +139,11 @@ export default function BotDetail() {
 
           <div className="aspect-video lg:aspect-[21/9] bg-card border border-white/5 rounded-xl overflow-hidden relative group">
             {bot.imageUrl ? (
-              <img src={bot.imageUrl} alt={bot.name} className="w-full h-full object-cover" />
+              bot.imageUrl.match(/\.(mp4|webm)(\?.*)?$/i) ? (
+                <video src={bot.imageUrl} controls className="w-full h-full object-cover" preload="metadata" />
+              ) : (
+                <img src={bot.imageUrl} alt={bot.name} className="w-full h-full object-cover" />
+              )
             ) : (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-card to-background">
                 <Cpu className="h-24 w-24 text-white/5 mb-4" />

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Filter, ArrowRight, Zap, TrendingUp, Download } from "lucide-react";
+import { Search, Filter, ArrowRight, Zap, TrendingUp, Download, Play } from "lucide-react";
 
 export default function Bots() {
   const [search, setSearch] = useState("");
@@ -90,7 +90,16 @@ export default function Bots() {
               <Card className="bg-card border-white/5 overflow-hidden group hover:border-primary/50 transition-colors cursor-pointer flex flex-col h-full">
                 <div className="relative h-48 bg-background flex items-center justify-center overflow-hidden border-b border-white/5">
                   {bot.imageUrl ? (
-                    <img src={bot.imageUrl} alt={bot.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    bot.imageUrl.match(/\.(mp4|webm)(\?.*)?$/i) ? (
+                      <>
+                        <video src={bot.imageUrl} muted className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" preload="metadata" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                          <Play className="h-12 w-12 text-white opacity-80" />
+                        </div>
+                      </>
+                    ) : (
+                      <img src={bot.imageUrl} alt={bot.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    )
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-card to-background flex items-center justify-center">
                       <TerminalSquare className="h-16 w-16 text-white/5" />
