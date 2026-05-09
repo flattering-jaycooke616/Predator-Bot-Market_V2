@@ -22,7 +22,13 @@ function stripBase(path: string): string {
     : path;
 }
 
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "";
+const clerkPubKey =
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
+  "pk_test_aW50ZW50LWN1Yi0xOC5jbGVyay5hY2NvdW50cy5kZXYk";
+
+if (!clerkPubKey || clerkPubKey.length < 10) {
+  console.error("[PredatorBot] Clerk key is missing or invalid");
+}
 
 function ClerkQueryClientCacheInvalidator() {
   const { addListener } = useClerk();
