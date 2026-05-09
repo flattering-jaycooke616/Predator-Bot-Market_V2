@@ -1,2 +1,2 @@
-/api/*    /api-fallback.json   404
-/*        /index.html          200
+/api/*  /api-fallback.json   404
+/*      /index.html          200

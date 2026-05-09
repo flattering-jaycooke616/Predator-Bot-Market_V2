@@ -219,7 +219,7 @@ export default function BotDetail() {
                     Acquire License
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] bg-card border-white/10 text-white">
+                <DialogContent aria-describedby={undefined} className="sm:max-w-[425px] bg-card border-white/10 text-white">
                   <DialogHeader>
                     <DialogTitle className="text-2xl">Secure Purchase</DialogTitle>
                     <DialogDescription className="text-muted-foreground">

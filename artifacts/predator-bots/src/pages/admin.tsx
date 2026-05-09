@@ -216,7 +216,7 @@ export default function Admin() {
                   <Plus className="mr-2 h-4 w-4" /> Add Algorithm
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[700px] bg-card border-white/10 text-white max-h-[90vh] overflow-y-auto">
+              <DialogContent aria-describedby={undefined} className="sm:max-w-[700px] bg-card border-white/10 text-white max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{editingBotId ? "Edit" : "Create"} Algorithm</DialogTitle>
                 </DialogHeader>
@@ -454,7 +454,7 @@ export default function Admin() {
 
       {/* Purchase Detail Dialog */}
       <Dialog open={!!viewingPurchase} onOpenChange={(open) => { if(!open) setViewingPurchase(null); }}>
-        <DialogContent className="sm:max-w-[500px] bg-card border-white/10 text-white">
+        <DialogContent aria-describedby={undefined} className="sm:max-w-[500px] bg-card border-white/10 text-white">
           <DialogHeader>
             <DialogTitle className="text-xl">Purchase Details</DialogTitle>
             <DialogDescription>Order #{viewingPurchase?.id.toString().padStart(6, '0')}</DialogDescription>
