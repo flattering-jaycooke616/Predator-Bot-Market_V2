@@ -44,15 +44,37 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", publicRouter);
 
 // Protected routes (Clerk auth required)
-app.use(
-  clerkMiddleware((req) => ({
-    publishableKey: publishableKeyFromHost(
-      getClerkProxyHost(req) ?? "",
-      process.env.CLERK_PUBLISHABLE_KEY,
-    ),
-  })),
-);
+const isTestMode = process.env.NODE_ENV === "test";
+
+if (!isTestMode) {
+  app.use(
+    clerkMiddleware((req) => ({
+      publishableKey: publishableKeyFromHost(
+        getClerkProxyHost(req) ?? "",
+        process.env.CLERK_PUBLISHABLE_KEY,
+      ),
+    })),
+  );
+} else {
+  // Test mode: skip Clerk auth validation
+  app.use((req, _res, next) => {
+    (req as any).auth = () => ({ userId: null, sessionId: null });
+    next();
+  });
+}
 
 app.use("/api", protectedRouter);
+
+// Global error handler
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  logger.error({ err }, "Unhandled error");
+  
+  // Handle JSON parsing errors
+  if (err instanceof SyntaxError && "body" in err) {
+    return res.status(400).json({ error: "Invalid JSON in request body" });
+  }
+  
+  return res.status(500).json({ error: "Internal server error" });
+});
 
 export default app;
