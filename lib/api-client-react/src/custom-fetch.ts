@@ -17,6 +17,7 @@ const DEFAULT_JSON_ACCEPT = "application/json, application/problem+json";
 
 let _baseUrl: string | null = null;
 let _authTokenGetter: AuthTokenGetter | null = null;
+let _mockMode = typeof import.meta !== "undefined" && import.meta.env?.VITE_MOCK_API === "true";
 
 /**
  * Set a base URL that is prepended to every relative request URL
@@ -326,6 +327,10 @@ export async function customFetch<T = unknown>(
   input: RequestInfo | URL,
   options: CustomFetchOptions = {},
 ): Promise<T> {
+  if (_mockMode) {
+    return mockFetch<T>(input, options);
+  }
+
   input = applyBaseUrl(input);
   const { responseType = "auto", headers: headersInit, ...init } = options;
 
@@ -368,4 +373,41 @@ export async function customFetch<T = unknown>(
   }
 
   return (await parseSuccessBody(response, responseType, requestInfo)) as T;
+}
+
+// ---------------------------------------------------------------------------
+// Mock mode — returns empty data so the UI renders without API errors
+// ---------------------------------------------------------------------------
+
+const MOCK_RESPONSES: Record<string, unknown> = {
+  "/api/bots": [],
+  "/api/bots/stats": { totalBots: 0, totalPurchases: 0, featuredBots: 0, categories: [] },
+  "/api/healthz": { status: "ok" },
+  "/api/config": { clerkPublishableKey: "" },
+  "/api/purchases": [],
+  "/api/admin/purchases": [],
+  "/api/admin/bots": [],
+  "/api/storage/uploads/request-url": { uploadUrl: "", objectPath: "" },
+};
+
+async function mockFetch<T = unknown>(
+  input: RequestInfo | URL,
+  options: CustomFetchOptions = {},
+): Promise<T> {
+  const url = resolveUrl(input);
+  const method = resolveMethod(input, options.method);
+
+  // Find matching mock response
+  let data: unknown = null;
+  for (const [path, mockData] of Object.entries(MOCK_RESPONSES)) {
+    if (url.startsWith(path)) {
+      data = mockData;
+      break;
+    }
+  }
+
+  // Simulate network delay
+  await new Promise((r) => setTimeout(r, 100));
+
+  return data as T;
 }
