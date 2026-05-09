@@ -53,3 +53,6 @@ Thumbs.db
 .replit-artifact
 **/.replit-artifact
 
+# Netlify local state
+.netlify
+

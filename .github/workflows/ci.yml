@@ -44,3 +44,11 @@ jobs:
       - run: pnpm -r --filter "@lintshiwe/*" publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    needs: typecheck
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify Build
+        run: curl -X POST -d '{}' ${{ secrets.NETLIFY_BUILD_HOOK_URL }}
