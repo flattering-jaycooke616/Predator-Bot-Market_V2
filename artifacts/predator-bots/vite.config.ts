@@ -16,7 +16,6 @@ export default defineConfig({
     "process.env.VITE_CLERK_PUBLISHABLE_KEY": JSON.stringify(
       process.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_test_aW50ZW50LWN1Yi0xOC5jbGVyay5hY2NvdW50cy5kZXYk"
     ),
-    "import.meta.env.VITE_MOCK_API": JSON.stringify("true"),
   },
   plugins: [
     react(),
