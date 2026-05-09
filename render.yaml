@@ -18,18 +18,6 @@ services:
         sync: false
       - key: CLERK_SECRET_KEY
         sync: false
-      - key: GOOGLE_APPLICATION_CREDENTIALS
-        sync: false
-      - key: GCS_PROJECT_ID
-        sync: false
-      - key: GCS_CLIENT_EMAIL
-        sync: false
-      - key: GCS_PRIVATE_KEY
-        sync: false
-      - key: PUBLIC_OBJECT_SEARCH_PATHS
-        sync: false
-      - key: PRIVATE_OBJECT_DIR
-        sync: false
 
 databases:
   - name: predator-db
