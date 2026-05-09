@@ -1,5 +1,0 @@
-{
-  "buildCommand": "cd artifacts/predator-bots && pnpm run build",
-  "outputDirectory": "artifacts/predator-bots/dist/public",
-  "installCommand": "pnpm install"
-}
