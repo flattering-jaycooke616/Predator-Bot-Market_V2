@@ -8,6 +8,7 @@ import { queryClient } from "@/lib/queryClient";
 import NotFound from "@/pages/not-found";
 
 import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
 import Home from "@/pages/home";
 import Bots from "@/pages/bots";
 import BotDetail from "@/pages/bot-detail";
@@ -84,6 +85,7 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
+      <Footer />
     </div>
   );
 }

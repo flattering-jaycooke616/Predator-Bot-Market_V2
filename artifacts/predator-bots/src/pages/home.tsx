@@ -191,11 +191,6 @@ export default function Home() {
           </Accordion>
         </div>
       </section>
-      
-      <footer className="py-12 border-t border-white/5 text-center text-muted-foreground text-sm font-mono">
-        <p>© {new Date().getFullYear()} Predator Bots. All rights reserved.</p>
-        <p className="mt-2 text-xs opacity-50 max-w-2xl mx-auto">Trading foreign exchange on margin carries a high level of risk. Past performance is not indicative of future results.</p>
-      </footer>
     </div>
   );
 }

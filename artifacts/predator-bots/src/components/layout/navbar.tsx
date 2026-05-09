@@ -3,6 +3,7 @@ import { useAuth, useUser, UserButton } from "@clerk/react";
 import { Button } from "@/components/ui/button";
 import { Activity, ShieldAlert, BarChart3, TerminalSquare, Menu, X } from "lucide-react";
 import { useState } from "react";
+import Logo from "./logo";
 
 export default function Navbar() {
   const [location, setLocation] = useLocation();
@@ -22,8 +23,8 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-primary/10 p-1.5 rounded-md group-hover:bg-primary/20 transition-colors">
-            <Activity className="h-5 w-5 text-primary" />
+          <div className="text-primary">
+            <Logo className="h-7 w-7" />
           </div>
           <span className="font-mono font-bold tracking-tight text-lg text-white">
             PREDATOR<span className="text-primary">BOTS</span>
