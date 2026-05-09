@@ -9,7 +9,6 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-24 pb-32">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background" />
-        <div className="absolute inset-0 -z-10 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none" />
         
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
