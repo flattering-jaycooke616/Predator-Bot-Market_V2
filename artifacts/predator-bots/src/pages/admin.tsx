@@ -98,9 +98,12 @@ export default function Admin() {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
           method: "PUT",
-          headers: { "Content-Type": imageFile.type },
+          headers: { "Content-Type": imageFile.type || "application/octet-stream" },
           body: imageFile,
         });
+        if (!result.ok) {
+          throw new Error(`Image upload failed: ${result.status} ${result.statusText}`);
+        }
         const storageId = (await result.json()) as Id<"_storage">;
         imageUrl = `/api/storage/files/${imageFile.name}`;
         
@@ -108,7 +111,7 @@ export default function Admin() {
           storageId,
           path: `/images/${imageFile.name}`,
           filename: imageFile.name,
-          contentType: imageFile.type,
+          contentType: imageFile.type || "application/octet-stream",
           size: imageFile.size,
         });
       }
@@ -117,16 +120,19 @@ export default function Admin() {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
           method: "PUT",
-          headers: { "Content-Type": file.type },
+          headers: { "Content-Type": file.type || "application/octet-stream" },
           body: file,
         });
+        if (!result.ok) {
+          throw new Error(`File upload failed: ${result.status} ${result.statusText}`);
+        }
         fileStorageId = (await result.json()) as Id<"_storage">;
         
         await storeFile({
           storageId: fileStorageId,
           path: `/files/${file.name}`,
           filename: file.name,
-          contentType: file.type,
+          contentType: file.type || "application/octet-stream",
           size: file.size,
         });
       }
