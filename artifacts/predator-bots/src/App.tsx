@@ -1,8 +1,8 @@
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
-import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
-import { ClerkProvider, SignIn, SignUp, useAuth, useClerk } from "@clerk/clerk-react";
-import { ConvexReactClient, Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ClerkProvider, SignIn, SignUp, useAuth } from "@clerk/clerk-react";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { queryClient } from "@/lib/queryClient";
@@ -28,12 +28,8 @@ const clerkPubKey =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
   "pk_test_aW50ZW50LWN1Yi0xOC5jbGVyay5hY2NvdW50cy5kZXYk";
 
-const convexUrl = import.meta.env.VITE_CONVEX_URL;
-const convex = convexUrl ? new ConvexReactClient(convexUrl) : null;
-
-if (!clerkPubKey || clerkPubKey.length < 10) {
-  console.error("[PredatorBot] Clerk key is missing or invalid");
-}
+const convexUrl = import.meta.env.VITE_CONVEX_URL || "https://harmless-gazelle-457.convex.cloud";
+const convex = new ConvexReactClient(convexUrl);
 
 function SignInPage() {
   return (
@@ -52,6 +48,29 @@ function SignUpPage() {
 }
 
 function AppContent() {
+  const { isLoaded, isSignedIn, getToken } = useAuth();
+  const [, setLocation] = useLocation();
+  const [convexReady, setConvexReady] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (isSignedIn) {
+        convex.setAuth(async () => getToken({ template: "convex" }));
+      } else {
+        convex.clearAuth();
+      }
+      setConvexReady(true);
+    }
+  }, [isLoaded, isSignedIn, getToken]);
+
+  if (!convexReady) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-muted-foreground font-mono">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground dark">
       <Navbar />
@@ -72,26 +91,8 @@ function AppContent() {
   );
 }
 
-function ClerkConvexProvider({ children }: { children: React.ReactNode }) {
-  const { getToken } = useAuth();
-  
-  useEffect(() => {
-    convex!.setAuth(async () => getToken({ template: "convex" }));
-  }, [getToken]);
-
-  return <>{children}</>;
-}
-
 function App() {
   const [, setLocation] = useLocation();
-
-  if (!clerkPubKey) {
-    return <div>Clerk publishable key is not configured. Set VITE_CLERK_PUBLISHABLE_KEY environment variable.</div>;
-  }
-
-  if (!convex) {
-    return <div>Convex URL is not configured. Set VITE_CONVEX_URL environment variable.</div>;
-  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -113,19 +114,9 @@ function App() {
               }
             }}
           >
-            <AuthLoading>
-              <div className="flex min-h-screen items-center justify-center bg-background">
-                <p className="text-muted-foreground font-mono">Loading...</p>
-              </div>
-            </AuthLoading>
-            <Unauthenticated>
+            <ConvexProvider client={convex}>
               <AppContent />
-            </Unauthenticated>
-            <Authenticated>
-              <ClerkConvexProvider>
-                <AppContent />
-              </ClerkConvexProvider>
-            </Authenticated>
+            </ConvexProvider>
           </ClerkProvider>
         </WouterRouter>
         <Toaster />
