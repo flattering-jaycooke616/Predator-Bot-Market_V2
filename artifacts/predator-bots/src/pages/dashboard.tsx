@@ -1,4 +1,5 @@
-import { useListMyPurchases, getListMyPurchasesQueryKey, useDownloadBot } from "@lintshiwe/api-client-react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@convex/_generated/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,39 +11,33 @@ import { format, formatDistanceToNow } from "date-fns";
 
 export default function Dashboard() {
   const { toast } = useToast();
-  const { data: purchases, isLoading, refetch } = useListMyPurchases({
-    query: { queryKey: getListMyPurchasesQueryKey() }
-  });
+  const purchases = useQuery(api.purchases.list, {});
 
-  const downloadBot = useDownloadBot();
+  const downloadBot = useMutation(api.purchases.download);
 
-  const handleDownload = (purchaseId: number, botName: string) => {
-    downloadBot.mutate({ purchaseId }, {
-      onSuccess: (data) => {
-        toast({
-          title: "Download Initiated",
-          description: data.expiryNotice || `Downloads remaining: ${data.downloadsRemaining}`,
-          className: "bg-primary text-primary-foreground border-none"
-        });
-        
-        const a = document.createElement('a');
-        a.href = data.downloadUrl;
-        const ext = botName.includes('.') ? '' : '.ex4';
-        a.download = `${botName}${ext}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        
-        refetch();
-      },
-      onError: (err) => {
-        toast({
-          title: "Download Failed",
-          description: (err as any)?.message || "An unexpected error occurred",
-          variant: "destructive"
-        });
-      }
-    });
+  const handleDownload = async (purchaseId: string, botName: string) => {
+    try {
+      const data = await downloadBot({ purchaseId: purchaseId as any });
+      toast({
+        title: "Download Initiated",
+        description: `Expires at ${new Date(data.expiresAt).toLocaleString()}`,
+        className: "bg-primary text-primary-foreground border-none"
+      });
+      
+      const a = document.createElement('a');
+      a.href = data.downloadUrl;
+      const ext = botName.includes('.') ? '' : '.ex4';
+      a.download = `${botName}${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err) {
+      toast({
+        title: "Download Failed",
+        description: (err as Error)?.message || "An unexpected error occurred",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -52,7 +47,7 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Manage your deployed algorithms and licenses.</p>
       </div>
 
-      {isLoading ? (
+      {purchases === undefined ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((n) => (
             <Card key={n} className="bg-card border-white/5">
@@ -86,7 +81,7 @@ export default function Dashboard() {
             const isCompleted = purchase.status === "completed";
             
             return (
-              <Card key={purchase.id} className="bg-card border-white/5 flex flex-col h-full hover:border-white/10 transition-colors">
+              <Card key={purchase._id} className="bg-card border-white/5 flex flex-col h-full hover:border-white/10 transition-colors">
                 <CardHeader>
                   <div className="flex justify-between items-start mb-2">
                     <CardTitle className="text-xl font-bold text-white">
@@ -101,7 +96,7 @@ export default function Dashboard() {
                     </Badge>
                   </div>
                   <CardDescription className="font-mono text-xs">
-                    Order #{purchase.id.toString().padStart(6, '0')} • {format(new Date(purchase.createdAt), 'MMM d, yyyy')}
+                    Order #{purchase._id.slice(0, 6)} • {format(new Date(purchase._creationTime), 'MMM d, yyyy')}
                   </CardDescription>
                 </CardHeader>
                 
@@ -161,8 +156,8 @@ export default function Dashboard() {
                   <Button 
                     className="w-full font-mono uppercase tracking-wider" 
                     variant={isExhausted || !isCompleted ? "secondary" : "default"}
-                    disabled={isExhausted || !isCompleted || downloadBot.isPending}
-                    onClick={() => handleDownload(purchase.id, purchase.bot?.name || "bot")}
+                    disabled={isExhausted || !isCompleted || downloadBot.status === "running"}
+                    onClick={() => handleDownload(purchase._id, purchase.bot?.name || "bot")}
                   >
                     <Download className="mr-2 h-4 w-4" />
                     {isExhausted ? 'Limit Reached' : 

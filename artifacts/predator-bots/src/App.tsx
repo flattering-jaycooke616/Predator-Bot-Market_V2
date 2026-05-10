@@ -2,6 +2,8 @@ import { useRef, useEffect } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { ClerkProvider, SignIn, SignUp, useClerk } from "@clerk/react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { ConvexReactClient } from "convex/react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { queryClient } from "@/lib/queryClient";
@@ -26,6 +28,9 @@ function stripBase(path: string): string {
 const clerkPubKey =
   import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
   "pk_test_aW50ZW50LWN1Yi0xOC5jbGVyay5hY2NvdW50cy5kZXYk";
+
+const convexUrl = import.meta.env.VITE_CONVEX_URL;
+const convex = convexUrl ? new ConvexReactClient(convexUrl) : null;
 
 if (!clerkPubKey || clerkPubKey.length < 10) {
   console.error("[PredatorBot] Clerk key is missing or invalid");
@@ -97,6 +102,10 @@ function App() {
     return <div>Clerk publishable key is not configured. Set VITE_CLERK_PUBLISHABLE_KEY environment variable.</div>;
   }
 
+  if (!convex) {
+    return <div>Convex URL is not configured. Set VITE_CONVEX_URL environment variable.</div>;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -117,8 +126,10 @@ function App() {
               }
             }}
           >
-            <ClerkQueryClientCacheInvalidator />
-            <Router />
+            <ConvexProviderWithClerk client={convex} useAuth={useClerk}>
+              <ClerkQueryClientCacheInvalidator />
+              <Router />
+            </ConvexProviderWithClerk>
           </ClerkProvider>
         </WouterRouter>
         <Toaster />

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useAuth } from "@clerk/react";
+import { useUser } from "@clerk/react";
 import { useLocation } from "wouter";
-import { useAdminListPurchases, getAdminListPurchasesQueryKey, useListBots, getListBotsQueryKey, useAdminCreateBot, useAdminUpdateBot, useAdminDeleteBot, useRequestUploadUrl, useAdminVerifyPurchase, useAdminRejectPurchase } from "@lintshiwe/api-client-react";
-import { queryClient } from "@/lib/queryClient";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@convex/_generated/api";
+import { Id } from "@convex/_generated/dataModel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -19,45 +20,42 @@ import { format } from "date-fns";
 export default function Admin() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const { user } = useUser();
 
-  // Queries
-  const { data: purchases } = useAdminListPurchases({ query: { queryKey: getAdminListPurchasesQueryKey() } });
-  const { data: bots } = useListBots({}, { query: { queryKey: getListBotsQueryKey() } });
+  const purchases = useQuery(api.admin.listPurchases, {});
+  const bots = useQuery(api.bots.list, {});
 
-  // Mutations
-  const createBot = useAdminCreateBot();
-  const updateBot = useAdminUpdateBot();
-  const deleteBot = useAdminDeleteBot();
-  const requestUploadUrl = useRequestUploadUrl();
-  const verifyPurchase = useAdminVerifyPurchase();
-  const rejectPurchase = useAdminRejectPurchase();
+  const createBot = useMutation(api.admin.createBot);
+  const updateBot = useMutation(api.admin.updateBot);
+  const deleteBot = useMutation(api.admin.deleteBot);
+  const generateUploadUrl = useMutation(api.storage.generateUploadUrl);
+  const storeFile = useMutation(api.storage.storeFile);
+  const verifyPurchase = useMutation(api.admin.verifyPurchase);
+  const rejectPurchase = useMutation(api.admin.rejectPurchase);
 
   const [isBotDialogOpen, setIsBotDialogOpen] = useState(false);
-  const [editingBotId, setEditingBotId] = useState<number | null>(null);
+  const [editingBotId, setEditingBotId] = useState<Id<"bots"> | null>(null);
   const [viewingPurchase, setViewingPurchase] = useState<any>(null);
   
-  // Form State
   const [formData, setFormData] = useState({
     name: "", slug: "", description: "", longDescription: "", 
     price: "", currency: "USD", category: "Forex", 
-    features: "", imageUrl: "", fileObjectPath: "", 
+    features: "", imageUrl: "", 
     featured: false, active: true
   });
   const [file, setFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
   const resetForm = () => {
     setFormData({
       name: "", slug: "", description: "", longDescription: "", 
       price: "", currency: "USD", category: "Forex", 
-      features: "", imageUrl: "", fileObjectPath: "", 
+      features: "", imageUrl: "", 
       featured: false, active: true
     });
     setFile(null);
     setImageFile(null);
-    setVideoFile(null);
     setEditingBotId(null);
   };
 
@@ -72,57 +70,65 @@ export default function Admin() {
       category: bot.category,
       features: bot.features.join("\n"),
       imageUrl: bot.imageUrl || "",
-      fileObjectPath: bot.fileObjectPath || "",
       featured: bot.featured,
       active: bot.active
     });
-    setEditingBotId(bot.id);
+    setEditingBotId(bot._id);
     setIsBotDialogOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: Id<"bots">) => {
     if (confirm("Are you sure you want to delete this bot?")) {
-      deleteBot.mutate({ id }, {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getListBotsQueryKey() });
-          toast({ title: "Bot Deleted" });
-        }
-      });
+      try {
+        await deleteBot({ id });
+        toast({ title: "Bot Deleted" });
+      } catch (err) {
+        toast({ title: "Error", description: (err as Error).message, variant: "destructive" });
+      }
     }
   };
 
   const handleSubmit = async () => {
     try {
       setUploading(true);
-      let objectPath = formData.fileObjectPath;
       let imageUrl = formData.imageUrl;
-
-      if (file) {
-        const uploadUrlRes = await requestUploadUrl.mutateAsync({
-          data: { filename: file.name, contentType: file.type || 'application/octet-stream' }
-        });
-        
-        await fetch(uploadUrlRes.uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": file.type || 'application/octet-stream' },
-          body: file
-        });
-        
-        objectPath = uploadUrlRes.objectPath;
-      }
+      let fileStorageId: Id<"_storage"> | undefined;
 
       if (imageFile) {
-        const uploadUrlRes = await requestUploadUrl.mutateAsync({
-          data: { filename: imageFile.name, contentType: imageFile.type || 'image/png' }
-        });
-        
-        await fetch(uploadUrlRes.uploadUrl, {
+        const uploadUrl = await generateUploadUrl();
+        const result = await fetch(uploadUrl, {
           method: "PUT",
-          headers: { "Content-Type": imageFile.type || 'image/png' },
-          body: imageFile
+          headers: { "Content-Type": imageFile.type },
+          body: imageFile,
         });
+        const storageId = (await result.json()) as Id<"_storage">;
+        imageUrl = `/api/storage/files/${imageFile.name}`;
         
-        imageUrl = uploadUrlRes.objectPath;
+        await storeFile({
+          storageId,
+          path: `/images/${imageFile.name}`,
+          filename: imageFile.name,
+          contentType: imageFile.type,
+          size: imageFile.size,
+        });
+      }
+
+      if (file) {
+        const uploadUrl = await generateUploadUrl();
+        const result = await fetch(uploadUrl, {
+          method: "PUT",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+        fileStorageId = (await result.json()) as Id<"_storage">;
+        
+        await storeFile({
+          storageId: fileStorageId,
+          path: `/files/${file.name}`,
+          filename: file.name,
+          contentType: file.type,
+          size: file.size,
+        });
       }
 
       const payload = {
@@ -133,24 +139,23 @@ export default function Admin() {
         price: parseFloat(formData.price),
         currency: formData.currency,
         category: formData.category,
-        features: formData.features.split("\n").filter(f => f.trim() !== ""),
+        features: formData.features.split("\n").filter((f: string) => f.trim() !== ""),
         imageUrl,
-        fileObjectPath: objectPath,
+        fileStorageId,
         featured: formData.featured,
         active: formData.active
       };
 
       if (editingBotId) {
-        await updateBot.mutateAsync({ id: editingBotId, data: payload });
+        await updateBot({ id: editingBotId, ...payload });
         toast({ title: "Bot Updated" });
       } else {
-        await createBot.mutateAsync({ data: payload });
+        await createBot(payload);
         toast({ title: "Bot Created" });
       }
 
       setIsBotDialogOpen(false);
       resetForm();
-      queryClient.invalidateQueries({ queryKey: getListBotsQueryKey() });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
@@ -158,28 +163,22 @@ export default function Admin() {
     }
   };
 
-  const handleVerify = (purchaseId: number) => {
-    verifyPurchase.mutate({ id: purchaseId }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getAdminListPurchasesQueryKey() });
-        toast({ title: "Purchase Verified", description: "Client can now download their bot.", className: "bg-primary text-primary-foreground" });
-      },
-      onError: () => {
-        toast({ title: "Error", description: "Failed to verify purchase", variant: "destructive" });
-      }
-    });
+  const handleVerify = async (purchaseId: Id<"purchases">) => {
+    try {
+      await verifyPurchase({ id: purchaseId });
+      toast({ title: "Purchase Verified", description: "Client can now download their bot.", className: "bg-primary text-primary-foreground" });
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to verify purchase", variant: "destructive" });
+    }
   };
 
-  const handleReject = (purchaseId: number) => {
-    rejectPurchase.mutate({ id: purchaseId }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getAdminListPurchasesQueryKey() });
-        toast({ title: "Purchase Rejected" });
-      },
-      onError: () => {
-        toast({ title: "Error", description: "Failed to reject purchase", variant: "destructive" });
-      }
-    });
+  const handleReject = async (purchaseId: Id<"purchases">) => {
+    try {
+      await rejectPurchase({ id: purchaseId });
+      toast({ title: "Purchase Rejected" });
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to reject purchase", variant: "destructive" });
+    }
   };
 
   const pendingPurchases = purchases?.filter(p => p.status === "pending") || [];
@@ -255,14 +254,8 @@ export default function Admin() {
                     {formData.imageUrl && !imageFile && <p className="text-xs text-muted-foreground mt-1">Current image: {formData.imageUrl}</p>}
                   </div>
                   <div className="col-span-2 space-y-2 p-4 border border-white/5 rounded-lg bg-background/50">
-                    <Label>Bot Video (MP4, WEBM) - Optional</Label>
-                    <Input type="file" className="bg-background border-white/10" accept="video/mp4,video/webm" onChange={e => setVideoFile(e.target.files?.[0] || null)} />
-                    <p className="text-xs text-muted-foreground mt-1">Upload a demo video for this bot</p>
-                  </div>
-                  <div className="col-span-2 space-y-2 p-4 border border-white/5 rounded-lg bg-background/50">
                     <Label>Bot File (.ex4, .mq4, or .zip)</Label>
                     <Input type="file" className="bg-background border-white/10" accept=".ex4,.mq4,.zip" onChange={e => setFile(e.target.files?.[0] || null)} />
-                    {formData.fileObjectPath && !file && <p className="text-xs text-muted-foreground mt-1">Current file: {formData.fileObjectPath}</p>}
                     <p className="text-xs text-muted-foreground mt-1">Accepted formats: .ex4 (compiled), .mq4 (source), .zip (archive)</p>
                   </div>
                   
@@ -290,40 +283,29 @@ export default function Admin() {
                   <TableHead className="text-muted-foreground">Name</TableHead>
                   <TableHead className="text-muted-foreground">Price</TableHead>
                   <TableHead className="text-muted-foreground">Downloads</TableHead>
-                  <TableHead className="text-muted-foreground">File</TableHead>
                   <TableHead className="text-muted-foreground">Status</TableHead>
                   <TableHead className="text-right text-muted-foreground">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {bots?.map((bot) => (
-                  <TableRow key={bot.id} className="border-white/5 hover:bg-white/5">
-                    <TableCell className="font-mono text-muted-foreground">#{bot.id}</TableCell>
+                  <TableRow key={bot._id} className="border-white/5 hover:bg-white/5">
+                    <TableCell className="font-mono text-muted-foreground">#{bot._id.slice(0, 8)}</TableCell>
                     <TableCell className="font-medium text-white">{bot.name}</TableCell>
                     <TableCell className="font-mono text-emerald-400">${bot.price}</TableCell>
                     <TableCell className="font-mono text-muted-foreground">{bot.downloadsCount}</TableCell>
-                    <TableCell>
-                      {bot.fileObjectPath ? (
-                        <Badge variant="outline" className="border-primary/50 text-primary font-mono text-[10px]">
-                          {bot.fileObjectPath.endsWith('.zip') ? <FileArchive className="h-3 w-3 mr-1" /> : <FileCode className="h-3 w-3 mr-1" />}
-                          {bot.fileObjectPath.split('/').pop()}
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-xs">No file</span>
-                      )}
-                    </TableCell>
                     <TableCell>
                       {bot.active ? <Badge className="bg-primary/20 text-primary border-none">Active</Badge> : <Badge variant="secondary">Inactive</Badge>}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(bot)} className="text-muted-foreground hover:text-white"><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(bot.id)} className="text-destructive hover:text-destructive/80"><Trash2 className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(bot._id)} className="text-destructive hover:text-destructive/80"><Trash2 className="h-4 w-4" /></Button>
                     </TableCell>
                   </TableRow>
                 ))}
                 {!bots?.length && (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No algorithms found.</TableCell>
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No algorithms found.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -354,17 +336,17 @@ export default function Admin() {
                 </TableHeader>
                 <TableBody>
                   {pendingPurchases.map((purchase) => (
-                    <TableRow key={purchase.id} className="border-white/5 hover:bg-white/5">
-                      <TableCell className="font-mono text-muted-foreground">#{purchase.id}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase.createdAt), 'MMM d, yyyy HH:mm')}</TableCell>
+                    <TableRow key={purchase._id} className="border-white/5 hover:bg-white/5">
+                      <TableCell className="font-mono text-muted-foreground">#{purchase._id.slice(0, 8)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase._creationTime), 'MMM d, yyyy HH:mm')}</TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground truncate max-w-[120px]">{purchase.userId}</TableCell>
                       <TableCell className="text-white">{purchase.bot?.name}</TableCell>
                       <TableCell className="font-mono text-emerald-400">${purchase.amountPaid}</TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground max-w-[150px] truncate">{purchase.paymentReference || "—"}</TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="icon" onClick={() => setViewingPurchase(purchase)} className="text-muted-foreground hover:text-white" title="View Details"><Eye className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleVerify(purchase.id)} className="text-emerald-400 hover:text-emerald-300" title="Verify & Approve"><CheckCircle className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleReject(purchase.id)} className="text-destructive hover:text-destructive/80" title="Reject"><XCircle className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleVerify(purchase._id)} className="text-emerald-400 hover:text-emerald-300" title="Verify & Approve"><CheckCircle className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleReject(purchase._id)} className="text-destructive hover:text-destructive/80" title="Reject"><XCircle className="h-4 w-4" /></Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -396,9 +378,9 @@ export default function Admin() {
                   </TableHeader>
                   <TableBody>
                     {completedPurchases.map((purchase) => (
-                      <TableRow key={purchase.id} className="border-white/5 hover:bg-white/5">
-                        <TableCell className="font-mono text-muted-foreground">#{purchase.id}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase.createdAt), 'MMM d, yyyy HH:mm')}</TableCell>
+                      <TableRow key={purchase._id} className="border-white/5 hover:bg-white/5">
+                        <TableCell className="font-mono text-muted-foreground">#{purchase._id.slice(0, 8)}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase._creationTime), 'MMM d, yyyy HH:mm')}</TableCell>
                         <TableCell className="font-mono text-xs text-muted-foreground truncate max-w-[120px]">{purchase.userId}</TableCell>
                         <TableCell className="text-white">{purchase.bot?.name}</TableCell>
                         <TableCell className="font-mono text-emerald-400">${purchase.amountPaid}</TableCell>
@@ -430,9 +412,9 @@ export default function Admin() {
                   </TableHeader>
                   <TableBody>
                     {refundedPurchases.map((purchase) => (
-                      <TableRow key={purchase.id} className="border-white/5 hover:bg-white/5">
-                        <TableCell className="font-mono text-muted-foreground">#{purchase.id}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase.createdAt), 'MMM d, yyyy HH:mm')}</TableCell>
+                      <TableRow key={purchase._id} className="border-white/5 hover:bg-white/5">
+                        <TableCell className="font-mono text-muted-foreground">#{purchase._id.slice(0, 8)}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase._creationTime), 'MMM d, yyyy HH:mm')}</TableCell>
                         <TableCell className="font-mono text-xs text-muted-foreground truncate max-w-[120px]">{purchase.userId}</TableCell>
                         <TableCell className="text-white">{purchase.bot?.name}</TableCell>
                         <TableCell className="font-mono text-emerald-400">${purchase.amountPaid}</TableCell>
@@ -452,12 +434,11 @@ export default function Admin() {
         </TabsContent>
       </Tabs>
 
-      {/* Purchase Detail Dialog */}
       <Dialog open={!!viewingPurchase} onOpenChange={(open) => { if(!open) setViewingPurchase(null); }}>
         <DialogContent aria-describedby={undefined} className="sm:max-w-[500px] bg-card border-white/10 text-white">
           <DialogHeader>
             <DialogTitle className="text-xl">Purchase Details</DialogTitle>
-            <DialogDescription>Order #{viewingPurchase?.id.toString().padStart(6, '0')}</DialogDescription>
+            <DialogDescription>Order #{viewingPurchase?._id.slice(0, 8)}</DialogDescription>
           </DialogHeader>
           {viewingPurchase && (
             <div className="space-y-4 py-4">
@@ -480,7 +461,7 @@ export default function Admin() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Date:</span>
-                  <span className="text-xs text-muted-foreground">{format(new Date(viewingPurchase.createdAt), 'MMM d, yyyy HH:mm')}</span>
+                  <span className="text-xs text-muted-foreground">{format(new Date(viewingPurchase._creationTime), 'MMM d, yyyy HH:mm')}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Status:</span>
@@ -495,10 +476,10 @@ export default function Admin() {
               </div>
               {viewingPurchase.status === 'pending' && (
                 <DialogFooter className="gap-2">
-                  <Button variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" onClick={() => { handleReject(viewingPurchase.id); setViewingPurchase(null); }}>
+                  <Button variant="outline" className="border-red-500/50 text-red-400 hover:bg-red-500/10" onClick={() => { handleReject(viewingPurchase._id); setViewingPurchase(null); }}>
                     <XCircle className="mr-2 h-4 w-4" /> Reject
                   </Button>
-                  <Button className="bg-primary text-primary-foreground" onClick={() => { handleVerify(viewingPurchase.id); setViewingPurchase(null); }}>
+                  <Button className="bg-primary text-primary-foreground" onClick={() => { handleVerify(viewingPurchase._id); setViewingPurchase(null); }}>
                     <CheckCircle className="mr-2 h-4 w-4" /> Verify & Approve
                   </Button>
                 </DialogFooter>

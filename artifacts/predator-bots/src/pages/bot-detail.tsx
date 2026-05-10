@@ -1,7 +1,9 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useParams, Link } from "wouter";
-import { useGetBot, getGetBotQueryKey, useCreatePurchase, useListMyPurchases, getListMyPurchasesQueryKey, CreatePurchaseMutationBody } from "@lintshiwe/api-client-react";
-import { useAuth } from "@clerk/react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@convex/_generated/api";
+import { Id } from "@convex/_generated/dataModel";
+import { useUser } from "@clerk/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,29 +12,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, CheckCircle2, TerminalSquare, Shield, Zap, Lock, CreditCard, Activity, Cpu, Clock } from "lucide-react";
-import { queryClient } from "@/lib/queryClient";
 
 export default function BotDetail() {
   const params = useParams();
-  const id = parseInt(params.id || "0", 10);
-  const { isSignedIn } = useAuth();
+  const id = params.id as Id<"bots">;
+  const { user, isLoaded, isSignedIn } = useUser();
   const { toast } = useToast();
   
-  const { data: bot, isLoading, error } = useGetBot(id, {
-    query: {
-      enabled: !!id,
-      queryKey: getGetBotQueryKey(id)
-    }
-  });
+  const bot = useQuery(api.bots.getById, id ? { id } : "skip");
 
-  const { data: purchases } = useListMyPurchases({
-    query: {
-      enabled: isSignedIn,
-      queryKey: getListMyPurchasesQueryKey()
-    }
-  });
+  const purchases = useQuery(api.purchases.list, isSignedIn ? {} : "skip");
 
-  const createPurchase = useCreatePurchase();
+  const createPurchase = useMutation(api.purchases.create);
   const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
   const [paymentRef, setPaymentRef] = useState("");
 
@@ -41,7 +32,7 @@ export default function BotDetail() {
   const hasCompletedPurchase = userPurchaseForBot?.status === "completed";
   const hasRefundedPurchase = userPurchaseForBot?.status === "refunded";
 
-  const handlePurchase = () => {
+  const handlePurchase = async () => {
     if (!paymentRef) {
       toast({
         title: "Error",
@@ -51,32 +42,27 @@ export default function BotDetail() {
       return;
     }
 
-    createPurchase.mutate({
-      data: {
+    try {
+      await createPurchase({
         botId: id,
         paymentReference: paymentRef
-      }
-    }, {
-      onSuccess: () => {
-        setIsPurchaseDialogOpen(false);
-        queryClient.invalidateQueries({ queryKey: getListMyPurchasesQueryKey() });
-        toast({
-          title: "Purchase Submitted",
-          description: "Your payment is being verified. Download will be available once approved.",
-          className: "bg-primary text-primary-foreground border-none"
-        });
-      },
-      onError: (err) => {
-        toast({
-          title: "Purchase Failed",
-          description: (err as any)?.message || "An unexpected error occurred",
-          variant: "destructive"
-        });
-      }
-    });
+      });
+      setIsPurchaseDialogOpen(false);
+      toast({
+        title: "Purchase Submitted",
+        description: "Your payment is being verified. Download will be available once approved.",
+        className: "bg-primary text-primary-foreground border-none"
+      });
+    } catch (err) {
+      toast({
+        title: "Purchase Failed",
+        description: (err as Error)?.message || "An unexpected error occurred",
+        variant: "destructive"
+      });
+    }
   };
 
-  if (isLoading) {
+  if (bot === undefined) {
     return (
       <div className="container mx-auto px-4 py-12">
         <Skeleton className="h-8 w-32 mb-8 bg-white/5" />
@@ -94,7 +80,7 @@ export default function BotDetail() {
     );
   }
 
-  if (error || !bot) {
+  if (!bot) {
     return (
       <div className="container mx-auto px-4 py-24 text-center">
         <TerminalSquare className="h-16 w-16 text-destructive mx-auto mb-4" />
@@ -253,8 +239,8 @@ export default function BotDetail() {
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setIsPurchaseDialogOpen(false)} className="border-white/10 text-white hover:bg-white/5">Cancel</Button>
-                    <Button onClick={handlePurchase} disabled={createPurchase.isPending} className="bg-primary text-primary-foreground hover:bg-primary/90">
-                      {createPurchase.isPending ? "Submitting..." : "Submit for Verification"}
+                    <Button onClick={handlePurchase} disabled={createPurchase.status === "running"} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                      {createPurchase.status === "running" ? "Submitting..." : "Submit for Verification"}
                     </Button>
                   </DialogFooter>
                 </DialogContent>

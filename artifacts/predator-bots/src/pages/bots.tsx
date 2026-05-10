@@ -1,21 +1,19 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { useListBots, getListBotsQueryKey } from "@lintshiwe/api-client-react";
+import { useQuery } from "convex/react";
+import { api } from "@convex/_generated/api";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Filter, ArrowRight, Zap, TrendingUp, Download, Play } from "lucide-react";
+import { Search, ArrowRight, Download, Play, TerminalSquare, CheckCircle2 } from "lucide-react";
 
 export default function Bots() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | undefined>(undefined);
   
-  const { data: bots, isLoading } = useListBots(
-    { category },
-    { query: { queryKey: getListBotsQueryKey({ category }) } }
-  );
+  const bots = useQuery(api.bots.list, category ? { category } : {});
 
   const filteredBots = Array.isArray(bots) ? bots.filter(bot => 
     bot.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -62,7 +60,7 @@ export default function Bots() {
         </div>
       </div>
 
-      {isLoading ? (
+      {bots === undefined ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <Card key={n} className="bg-card border-white/5 overflow-hidden">
@@ -85,8 +83,8 @@ export default function Bots() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBots?.map((bot) => (
-            <Link key={bot.id} href={`/bots/${bot.id}`}>
+          {filteredBots.map((bot) => (
+            <Link key={bot._id} href={`/bots/${bot._id}`}>
               <Card className="bg-card border-white/5 overflow-hidden group hover:border-primary/50 transition-colors cursor-pointer flex flex-col h-full">
                 <div className="relative h-48 bg-background flex items-center justify-center overflow-hidden border-b border-white/5">
                   {bot.imageUrl ? (
@@ -164,4 +162,3 @@ export default function Bots() {
     </div>
   );
 }
-import { TerminalSquare, CheckCircle2 } from "lucide-react";

@@ -19,6 +19,9 @@ export default defineConfig({
     "import.meta.env.VITE_API_URL": JSON.stringify(
       process.env.VITE_API_URL || ""
     ),
+    "import.meta.env.VITE_CONVEX_URL": JSON.stringify(
+      process.env.VITE_CONVEX_URL || "https://frugal-parakeet-617.convex.cloud"
+    ),
   },
   plugins: [
     react(),
@@ -28,6 +31,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
       "@assets": path.resolve(import.meta.dirname, "..", "..", "attached_assets"),
+      "@convex": path.resolve(import.meta.dirname, "..", "..", "convex"),
     },
     dedupe: ["react", "react-dom"],
   },
