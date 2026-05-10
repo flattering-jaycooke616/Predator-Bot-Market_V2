@@ -157,7 +157,7 @@ export default function BotDetail() {
             <div className="flex justify-between items-baseline mb-6">
               <div className="text-sm font-mono text-muted-foreground uppercase tracking-wider">License Fee</div>
               <div className="text-4xl font-bold text-white font-mono">
-                {bot.currency === 'USD' ? '$' : bot.currency}{bot.price}
+                {bot.currency === 'ZAR' ? 'R' : bot.currency === 'USD' ? '$' : bot.currency}{bot.price}
               </div>
             </div>
 
@@ -215,14 +215,14 @@ export default function BotDetail() {
                   <div className="py-6 space-y-6">
                     <div className="bg-background p-4 rounded-lg border border-white/5 flex justify-between items-center">
                       <span className="font-mono text-muted-foreground">Total Due:</span>
-                      <span className="text-2xl font-bold text-emerald-400 font-mono">${bot.price}</span>
+                      <span className="text-2xl font-bold text-emerald-400 font-mono">R{bot.price}</span>
                     </div>
                     
                     <div className="space-y-3">
                       <Label className="text-xs uppercase tracking-wider text-muted-foreground font-mono">Payment Instructions</Label>
                       <div className="text-sm bg-white/5 p-3 rounded border border-white/5 text-muted-foreground leading-relaxed">
-                        Please transfer exactly <strong className="text-white">${bot.price} USDT (TRC20)</strong> to:<br/>
-                        <code className="block mt-2 p-2 bg-background rounded text-primary break-all">TQa8ZzXG....9s1KwM</code>
+                        Please transfer exactly <strong className="text-white">R{bot.price}</strong> via EFT or payment method provided.<br/>
+                        <span className="block mt-2 text-xs">Contact us for payment details if not provided.</span>
                       </div>
                     </div>
 

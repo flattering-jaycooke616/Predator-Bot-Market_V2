@@ -106,7 +106,7 @@ export default function Dashboard() {
                   <div className="bg-background rounded border border-white/5 p-4 space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Amount Paid:</span>
-                      <span className="font-mono text-white">${purchase.amountPaid}</span>
+                      <span className="font-mono text-white">R{purchase.amountPaid}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Downloads:</span>

@@ -12,6 +12,7 @@ export default defineSchema({
     category: v.string(),
     features: v.array(v.string()),
     imageUrl: v.optional(v.string()),
+    imageStorageId: v.optional(v.id("_storage")),
     fileStorageId: v.optional(v.id("_storage")),
     featured: v.boolean(),
     active: v.boolean(),

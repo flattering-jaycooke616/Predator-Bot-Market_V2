@@ -123,7 +123,7 @@ export default function Bots() {
                       {bot.name}
                     </CardTitle>
                     <div className="font-mono font-bold text-lg text-emerald-400">
-                      {bot.currency === 'USD' ? '$' : bot.currency}{bot.price}
+                      {bot.currency === 'ZAR' ? 'R' : bot.currency === 'USD' ? '$' : bot.currency}{bot.price}
                     </div>
                   </div>
                   <CardDescription className="text-muted-foreground line-clamp-2">

@@ -46,16 +46,18 @@ export default function Admin() {
   const [file, setFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [imageStorageId, setImageStorageId] = useState<Id<"_storage"> | undefined>();
 
   const resetForm = () => {
     setFormData({
       name: "", slug: "", description: "", longDescription: "", 
-      price: "", currency: "USD", category: "Forex", 
+    price: "", currency: "ZAR", category: "Forex",
       features: "", imageUrl: "", 
       featured: false, active: true
     });
     setFile(null);
     setImageFile(null);
+    setImageStorageId(undefined);
     setEditingBotId(null);
   };
 
@@ -73,6 +75,7 @@ export default function Admin() {
       featured: bot.featured,
       active: bot.active
     });
+    setImageStorageId(bot.imageStorageId);
     setEditingBotId(bot._id);
     setIsBotDialogOpen(true);
   };
@@ -91,24 +94,23 @@ export default function Admin() {
   const handleSubmit = async () => {
     try {
       setUploading(true);
-      let imageUrl = formData.imageUrl;
       let fileStorageId: Id<"_storage"> | undefined;
 
       if (imageFile) {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
-          method: "PUT",
+          method: "POST",
           headers: { "Content-Type": imageFile.type || "application/octet-stream" },
           body: imageFile,
         });
         if (!result.ok) {
           throw new Error(`Image upload failed: ${result.status} ${result.statusText}`);
         }
-        const storageId = (await result.json()) as Id<"_storage">;
-        imageUrl = `/api/storage/files/${imageFile.name}`;
+        const { storageId: newImageStorageId } = await result.json();
+        setImageStorageId(newImageStorageId);
         
         await storeFile({
-          storageId,
+          storageId: newImageStorageId,
           path: `/images/${imageFile.name}`,
           filename: imageFile.name,
           contentType: imageFile.type || "application/octet-stream",
@@ -119,17 +121,18 @@ export default function Admin() {
       if (file) {
         const uploadUrl = await generateUploadUrl();
         const result = await fetch(uploadUrl, {
-          method: "PUT",
+          method: "POST",
           headers: { "Content-Type": file.type || "application/octet-stream" },
           body: file,
         });
         if (!result.ok) {
           throw new Error(`File upload failed: ${result.status} ${result.statusText}`);
         }
-        fileStorageId = (await result.json()) as Id<"_storage">;
+        const { storageId: newFileStorageId } = await result.json();
+        fileStorageId = newFileStorageId;
         
         await storeFile({
-          storageId: fileStorageId,
+          storageId: newFileStorageId,
           path: `/files/${file.name}`,
           filename: file.name,
           contentType: file.type || "application/octet-stream",
@@ -146,7 +149,7 @@ export default function Admin() {
         currency: formData.currency,
         category: formData.category,
         features: formData.features.split("\n").filter((f: string) => f.trim() !== ""),
-        imageUrl,
+        imageStorageId,
         fileStorageId,
         featured: formData.featured,
         active: formData.active
@@ -298,7 +301,7 @@ export default function Admin() {
                   <TableRow key={bot._id} className="border-white/5 hover:bg-white/5">
                     <TableCell className="font-mono text-muted-foreground">#{bot._id.slice(0, 8)}</TableCell>
                     <TableCell className="font-medium text-white">{bot.name}</TableCell>
-                    <TableCell className="font-mono text-emerald-400">${bot.price}</TableCell>
+                    <TableCell className="font-mono text-emerald-400">R{bot.price}</TableCell>
                     <TableCell className="font-mono text-muted-foreground">{bot.downloadsCount}</TableCell>
                     <TableCell>
                       {bot.active ? <Badge className="bg-primary/20 text-primary border-none">Active</Badge> : <Badge variant="secondary">Inactive</Badge>}
@@ -347,7 +350,7 @@ export default function Admin() {
                       <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase._creationTime), 'MMM d, yyyy HH:mm')}</TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground truncate max-w-[120px]">{purchase.userId}</TableCell>
                       <TableCell className="text-white">{purchase.bot?.name}</TableCell>
-                      <TableCell className="font-mono text-emerald-400">${purchase.amountPaid}</TableCell>
+                      <TableCell className="font-mono text-emerald-400">R{purchase.amountPaid}</TableCell>
                       <TableCell className="font-mono text-xs text-muted-foreground max-w-[150px] truncate">{purchase.paymentReference || "—"}</TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="icon" onClick={() => setViewingPurchase(purchase)} className="text-muted-foreground hover:text-white" title="View Details"><Eye className="h-4 w-4" /></Button>
@@ -389,7 +392,7 @@ export default function Admin() {
                         <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase._creationTime), 'MMM d, yyyy HH:mm')}</TableCell>
                         <TableCell className="font-mono text-xs text-muted-foreground truncate max-w-[120px]">{purchase.userId}</TableCell>
                         <TableCell className="text-white">{purchase.bot?.name}</TableCell>
-                        <TableCell className="font-mono text-emerald-400">${purchase.amountPaid}</TableCell>
+                        <TableCell className="font-mono text-emerald-400">R{purchase.amountPaid}</TableCell>
                         <TableCell className="font-mono text-muted-foreground">{purchase.downloadCount}/{purchase.maxDownloads}</TableCell>
                         <TableCell className="text-right font-mono text-xs text-muted-foreground max-w-[150px] truncate">{purchase.paymentReference || "—"}</TableCell>
                       </TableRow>
@@ -423,7 +426,7 @@ export default function Admin() {
                         <TableCell className="text-sm text-muted-foreground">{format(new Date(purchase._creationTime), 'MMM d, yyyy HH:mm')}</TableCell>
                         <TableCell className="font-mono text-xs text-muted-foreground truncate max-w-[120px]">{purchase.userId}</TableCell>
                         <TableCell className="text-white">{purchase.bot?.name}</TableCell>
-                        <TableCell className="font-mono text-emerald-400">${purchase.amountPaid}</TableCell>
+                        <TableCell className="font-mono text-emerald-400">R{purchase.amountPaid}</TableCell>
                         <TableCell className="text-right font-mono text-xs text-muted-foreground max-w-[150px] truncate">{purchase.paymentReference || "—"}</TableCell>
                       </TableRow>
                     ))}
@@ -455,7 +458,7 @@ export default function Admin() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Amount:</span>
-                  <span className="font-mono text-emerald-400">${viewingPurchase.amountPaid}</span>
+                  <span className="font-mono text-emerald-400">R{viewingPurchase.amountPaid}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">User ID:</span>

@@ -1,37 +1,60 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 
+async function resolveBotUrls(ctx: any, bot: any) {
+  let imageUrl = bot.imageUrl;
+  if (bot.imageStorageId) {
+    imageUrl = await ctx.storage.getUrl(bot.imageStorageId);
+  }
+  let fileUrl = null;
+  if (bot.fileStorageId) {
+    fileUrl = await ctx.storage.getUrl(bot.fileStorageId);
+  }
+  return { ...bot, imageUrl, fileUrl };
+}
+
 export const list = query({
   args: { category: v.optional(v.string()) },
   handler: async (ctx, args) => {
+    let bots;
     if (args.category) {
-      return await ctx.db
+      bots = await ctx.db
         .query("bots")
         .withIndex("by_category", (q) => q.eq("category", args.category!))
         .filter((q) => q.eq(q.field("active"), true))
         .collect();
+    } else {
+      bots = await ctx.db
+        .query("bots")
+        .withIndex("by_active", (q) => q.eq("active", true))
+        .collect();
     }
-    return await ctx.db
-      .query("bots")
-      .withIndex("by_active", (q) => q.eq("active", true))
-      .collect();
+    const result = [];
+    for (const bot of bots) {
+      result.push(await resolveBotUrls(ctx, bot));
+    }
+    return result;
   },
 });
 
 export const getById = query({
   args: { id: v.id("bots") },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
+    const bot = await ctx.db.get(args.id);
+    if (!bot) return null;
+    return await resolveBotUrls(ctx, bot);
   },
 });
 
 export const getBySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const bot = await ctx.db
       .query("bots")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .first();
+    if (!bot) return null;
+    return await resolveBotUrls(ctx, bot);
   },
 });
 
