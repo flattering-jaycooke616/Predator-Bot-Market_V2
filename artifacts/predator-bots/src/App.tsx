@@ -37,19 +37,16 @@ if (!clerkPubKey || clerkPubKey.length < 10) {
 
 function ClerkConvexProvider({ children }: { children: React.ReactNode }) {
   const { getToken, isLoaded } = useAuth();
-  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (isLoaded) {
-      getToken({ template: "convex" }).then(setToken);
+      getToken({ template: "convex" }).then((token) => {
+        if (token) convex!.setAuth(token);
+      });
     }
   }, [isLoaded, getToken]);
 
-  return (
-    <ConvexProvider client={convex!} initialState={token ? { token } : undefined}>
-      {children}
-    </ConvexProvider>
-  );
+  return <ConvexProvider client={convex!}>{children}</ConvexProvider>;
 }
 
 function SignInPage() {
