@@ -21,4 +21,4 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install
-      - run: pnpm audit --audit-level=moderate
+      - run: pnpm audit --audit-level=high
