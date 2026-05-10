@@ -1,9 +1,8 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { ClerkProvider, SignIn, SignUp, useAuth, useClerk } from "@clerk/clerk-react";
-import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { ConvexReactClient } from "convex/react";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { queryClient } from "@/lib/queryClient";
@@ -36,26 +35,21 @@ if (!clerkPubKey || clerkPubKey.length < 10) {
   console.error("[PredatorBot] Clerk key is missing or invalid");
 }
 
-function ClerkQueryClientCacheInvalidator() {
-  const { addListener } = useClerk();
-  const queryClient = useQueryClient();
-  const prevUserIdRef = useRef<string | null | undefined>(undefined);
+function ClerkConvexProvider({ children }: { children: React.ReactNode }) {
+  const { getToken, isLoaded } = useAuth();
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = addListener(({ user }) => {
-      const userId = user?.id ?? null;
-      if (
-        prevUserIdRef.current !== undefined &&
-        prevUserIdRef.current !== userId
-      ) {
-        queryClient.clear();
-      }
-      prevUserIdRef.current = userId;
-    });
-    return unsubscribe;
-  }, [addListener, queryClient]);
+    if (isLoaded) {
+      getToken({ template: "convex" }).then(setToken);
+    }
+  }, [isLoaded, getToken]);
 
-  return null;
+  return (
+    <ConvexProvider client={convex!} initialState={token ? { token } : undefined}>
+      {children}
+    </ConvexProvider>
+  );
 }
 
 function SignInPage() {
@@ -126,10 +120,9 @@ function App() {
               }
             }}
           >
-            <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-              <ClerkQueryClientCacheInvalidator />
+            <ClerkConvexProvider>
               <Router />
-            </ConvexProviderWithClerk>
+            </ClerkConvexProvider>
           </ClerkProvider>
         </WouterRouter>
         <Toaster />
