@@ -239,8 +239,8 @@ export default function BotDetail() {
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setIsPurchaseDialogOpen(false)} className="border-white/10 text-white hover:bg-white/5">Cancel</Button>
-                    <Button onClick={handlePurchase} disabled={createPurchase.status === "running"} className="bg-primary text-primary-foreground hover:bg-primary/90">
-                      {createPurchase.status === "running" ? "Submitting..." : "Submit for Verification"}
+                    <Button onClick={handlePurchase} className="bg-primary text-primary-foreground hover:bg-primary/90">
+                      Submit for Verification
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -266,7 +266,7 @@ export default function BotDetail() {
           <div className="bg-card border border-white/5 p-6 rounded-xl">
             <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider font-mono">System Features</h4>
             <ul className="space-y-3">
-              {bot.features.map((feature, i) => (
+              {bot.features.map((feature: string, i: number) => (
                 <li key={i} className="flex items-start">
                   <CheckCircle2 className="h-5 w-5 text-primary mr-3 shrink-0" />
                   <span className="text-sm text-muted-foreground">{feature}</span>

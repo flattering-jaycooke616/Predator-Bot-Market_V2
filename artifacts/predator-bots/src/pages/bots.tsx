@@ -131,7 +131,7 @@ export default function Bots() {
                   </CardDescription>
                   
                   <div className="flex flex-wrap gap-2 mt-4">
-                    {bot.features.slice(0, 3).map((feature, i) => (
+                    {bot.features.slice(0, 3).map((feature: string, i: number) => (
                       <div key={i} className="flex items-center text-xs text-muted-foreground bg-white/5 px-2 py-1 rounded">
                         <CheckCircle2 className="h-3 w-3 text-primary mr-1" />
                         {feature}

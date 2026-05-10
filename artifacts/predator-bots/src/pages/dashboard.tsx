@@ -22,7 +22,7 @@ export default function Dashboard() {
       const data = await downloadBot({ purchaseId: purchaseId as any });
       toast({
         title: "Download Initiated",
-        description: `Expires at ${new Date(data.expiresAt).toLocaleString()}`,
+        description: data.expiresAt ? `Expires at ${new Date(data.expiresAt).toLocaleString()}` : "Download initiated",
         className: "bg-primary text-primary-foreground border-none"
       });
       
@@ -158,7 +158,7 @@ export default function Dashboard() {
                   <Button 
                     className="w-full font-mono uppercase tracking-wider" 
                     variant={isExhausted || !isCompleted ? "secondary" : "default"}
-                    disabled={isExhausted || !isCompleted || downloadBot.status === "running"}
+                    disabled={isExhausted || !isCompleted}
                     onClick={() => handleDownload(purchase._id, purchase.bot?.name || "bot")}
                   >
                     <Download className="mr-2 h-4 w-4" />

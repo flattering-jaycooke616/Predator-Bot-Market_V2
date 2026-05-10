@@ -20,30 +20,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install
-      - run: pnpm run typecheck
-
-  publish:
-    needs: typecheck
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.2
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-          registry-url: https://npm.pkg.github.com
-          scope: "@lintshiwe"
-      - run: pnpm install
-      - run: pnpm -r --filter "@lintshiwe/*" publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm -r --filter "./artifacts/predator-bots" --if-present run typecheck
 
   deploy:
     needs: typecheck
