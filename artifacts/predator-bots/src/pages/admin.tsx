@@ -20,9 +20,9 @@ import { format } from "date-fns";
 export default function Admin() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  const { user } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
 
-  const purchases = useQuery(api.admin.listPurchases, {});
+  const purchases = useQuery(api.admin.listPurchases, isSignedIn ? {} : "skip");
   const bots = useQuery(api.bots.list, {});
 
   const createBot = useMutation(api.admin.createBot);

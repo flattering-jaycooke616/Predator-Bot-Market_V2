@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
+import { useAuth } from "@clerk/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,8 +11,9 @@ import { Link } from "wouter";
 import { format, formatDistanceToNow } from "date-fns";
 
 export default function Dashboard() {
+  const { isSignedIn } = useAuth();
   const { toast } = useToast();
-  const purchases = useQuery(api.purchases.list, {});
+  const purchases = useQuery(api.purchases.list, isSignedIn ? {} : "skip");
 
   const downloadBot = useMutation(api.purchases.download);
 
