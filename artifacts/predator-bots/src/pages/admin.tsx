@@ -25,6 +25,19 @@ export default function Admin() {
   const purchases = useQuery(api.admin.listPurchases, isSignedIn ? {} : "skip");
   const bots = useQuery(api.bots.list, {});
 
+  if (!isLoaded) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    setLocation("/sign-in");
+    return null;
+  }
+
   const createBot = useMutation(api.admin.createBot);
   const updateBot = useMutation(api.admin.updateBot);
   const deleteBot = useMutation(api.admin.deleteBot);
