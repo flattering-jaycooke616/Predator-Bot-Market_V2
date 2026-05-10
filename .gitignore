@@ -56,3 +56,7 @@ Thumbs.db
 # Netlify local state
 .netlify
 
+# Vercel API build output
+artifacts/api-server/api/index.js
+artifacts/api-server/api-vercel
+
