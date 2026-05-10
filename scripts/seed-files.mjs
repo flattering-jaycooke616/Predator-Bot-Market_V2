@@ -30,33 +30,24 @@ async function uploadFile(filePath) {
 
 async function main() {
   try {
-    const bots = await client.query(api.bots.list, {});
-    console.log(`Found ${bots.length} bots in database\n`);
-
     const fileMap = {
       "predator-x9000-ea": "/home/ntoampi/Downloads/PREDATOR_X9000_EA.mq4",
       "predator-x9000-ea-v2": "/home/ntoampi/Downloads/PREDATOR_X9000_EA_V2.mq4",
       "nasdaq-trend-follower-ea": "/home/ntoampi/Downloads/NASDAQ_TREND_FOLLOWER_EA.mq4",
     };
 
-    for (const bot of bots) {
-      const filePath = fileMap[bot.slug];
-      if (!filePath) {
-        console.log(`Skipping ${bot.name} - no file mapped`);
-        continue;
-      }
-
+    for (const [slug, filePath] of Object.entries(fileMap)) {
       try {
         const fileStorageId = await uploadFile(filePath);
         
-        await client.mutation(api.admin.updateBot, {
-          id: bot._id,
+        await client.mutation(api.seedfiles.seedBotFiles, {
+          botSlug: slug,
           fileStorageId,
         });
         
-        console.log(`  ✓ Updated ${bot.name} with fileStorageId\n`);
+        console.log(`  ✓ Updated ${slug} with file\n`);
       } catch (err) {
-        console.error(`  ✗ Failed to update ${bot.name}: ${err.message}\n`);
+        console.error(`  ✗ Failed for ${slug}: ${err.message}\n`);
       }
     }
 
