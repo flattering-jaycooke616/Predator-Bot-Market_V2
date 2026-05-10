@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
-import { ClerkProvider, SignIn, SignUp, useClerk } from "@clerk/react";
+import { ClerkProvider, SignIn, SignUp, useAuth, useClerk } from "@clerk/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
 import { Toaster } from "@/components/ui/toaster";
@@ -126,7 +126,7 @@ function App() {
               }
             }}
           >
-            <ConvexProviderWithClerk client={convex} useAuth={useClerk}>
+            <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
               <ClerkQueryClientCacheInvalidator />
               <Router />
             </ConvexProviderWithClerk>
