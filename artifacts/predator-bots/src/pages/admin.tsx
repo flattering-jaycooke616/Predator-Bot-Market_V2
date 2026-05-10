@@ -20,23 +20,10 @@ import { format } from "date-fns";
 export default function Admin() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { user } = useUser();
 
-  const purchases = useQuery(api.admin.listPurchases, isSignedIn ? {} : "skip");
+  const purchases = useQuery(api.admin.listPurchases, {});
   const bots = useQuery(api.bots.list, {});
-
-  if (!isLoaded) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
-  }
-
-  if (!isSignedIn) {
-    setLocation("/sign-in");
-    return null;
-  }
 
   const createBot = useMutation(api.admin.createBot);
   const updateBot = useMutation(api.admin.updateBot);

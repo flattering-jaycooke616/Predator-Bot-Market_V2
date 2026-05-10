@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { ClerkProvider, SignIn, SignUp, useAuth, useClerk } from "@clerk/clerk-react";
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { ConvexReactClient, Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { queryClient } from "@/lib/queryClient";
@@ -35,18 +35,6 @@ if (!clerkPubKey || clerkPubKey.length < 10) {
   console.error("[PredatorBot] Clerk key is missing or invalid");
 }
 
-function ClerkConvexProvider({ children }: { children: React.ReactNode }) {
-  const { getToken, isLoaded } = useAuth();
-
-  useEffect(() => {
-    if (isLoaded) {
-      convex!.setAuth(async () => getToken({ template: "convex" }));
-    }
-  }, [isLoaded, getToken]);
-
-  return <ConvexProvider client={convex!}>{children}</ConvexProvider>;
-}
-
 function SignInPage() {
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4">
@@ -63,7 +51,7 @@ function SignUpPage() {
   );
 }
 
-function Router() {
+function AppContent() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground dark">
       <Navbar />
@@ -82,6 +70,16 @@ function Router() {
       <Footer />
     </div>
   );
+}
+
+function ClerkConvexProvider({ children }: { children: React.ReactNode }) {
+  const { getToken } = useAuth();
+  
+  useEffect(() => {
+    convex!.setAuth(async () => getToken({ template: "convex" }));
+  }, [getToken]);
+
+  return <>{children}</>;
 }
 
 function App() {
@@ -115,9 +113,19 @@ function App() {
               }
             }}
           >
-            <ClerkConvexProvider>
-              <Router />
-            </ClerkConvexProvider>
+            <AuthLoading>
+              <div className="flex min-h-screen items-center justify-center bg-background">
+                <p className="text-muted-foreground font-mono">Loading...</p>
+              </div>
+            </AuthLoading>
+            <Unauthenticated>
+              <AppContent />
+            </Unauthenticated>
+            <Authenticated>
+              <ClerkConvexProvider>
+                <AppContent />
+              </ClerkConvexProvider>
+            </Authenticated>
           </ClerkProvider>
         </WouterRouter>
         <Toaster />

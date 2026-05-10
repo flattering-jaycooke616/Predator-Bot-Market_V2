@@ -16,12 +16,12 @@ import { ArrowLeft, CheckCircle2, TerminalSquare, Shield, Zap, Lock, CreditCard,
 export default function BotDetail() {
   const params = useParams();
   const id = params.id as Id<"bots">;
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { user } = useUser();
   const { toast } = useToast();
   
   const bot = useQuery(api.bots.getById, id ? { id } : "skip");
 
-  const purchases = useQuery(api.purchases.list, isSignedIn ? {} : "skip");
+  const purchases = useQuery(api.purchases.list, {});
 
   const createPurchase = useMutation(api.purchases.create);
   const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
@@ -161,7 +161,7 @@ export default function BotDetail() {
               </div>
             </div>
 
-            {!isSignedIn ? (
+            {!user ? (
               <Link href="/sign-in">
                 <Button className="w-full h-14 bg-primary text-primary-foreground hover:bg-primary/90 font-mono uppercase tracking-wider text-base neon-glow">
                   Sign In to Purchase

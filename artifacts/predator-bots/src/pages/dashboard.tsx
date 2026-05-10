@@ -1,33 +1,17 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
-import { useAuth } from "@clerk/clerk-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Download, TerminalSquare, AlertCircle, Clock, HardDriveDownload, Timer } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { format, formatDistanceToNow } from "date-fns";
 
 export default function Dashboard() {
-  const { isSignedIn, isLoaded } = useAuth();
-  const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const purchases = useQuery(api.purchases.list, isSignedIn ? {} : "skip");
-
-  if (!isLoaded) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
-  }
-
-  if (!isSignedIn) {
-    setLocation("/sign-in");
-    return null;
-  }
+  const purchases = useQuery(api.purchases.list, {});
 
   const downloadBot = useMutation(api.purchases.download);
 
