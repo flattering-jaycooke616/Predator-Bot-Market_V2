@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { useAuth, useUser, UserButton } from "@clerk/react";
+import { useAuth, useUser, UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Activity, ShieldAlert, BarChart3, TerminalSquare, Menu, X } from "lucide-react";
 import { useState } from "react";

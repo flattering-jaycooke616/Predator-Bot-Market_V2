@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useUser } from "@clerk/react";
+import { useUser } from "@clerk/clerk-react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
