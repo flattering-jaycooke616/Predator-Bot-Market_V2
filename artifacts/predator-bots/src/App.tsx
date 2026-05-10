@@ -40,9 +40,7 @@ function ClerkConvexProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoaded) {
-      getToken({ template: "convex" }).then((token) => {
-        if (token) convex!.setAuth(token);
-      });
+      convex!.setAuth(async () => getToken({ template: "convex" }));
     }
   }, [isLoaded, getToken]);
 
